@@ -1,0 +1,38 @@
+package team.tttt.pms.stu.academiSupport.service.Impl;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.stu.academiSupport.mapper.CfroomRsvtMapper;
+import team.tttt.pms.stu.academiSupport.service.CfroomRsvtService;
+import team.tttt.pms.stu.classroom.mapper.StuQstnMapper;
+import team.tttt.pms.stu.vo.CfroomRsvtVO;
+
+@Service
+public class CfroomRsvtServiceImpl implements CfroomRsvtService {
+	@Inject
+    private CfroomRsvtMapper cfroomRsvtMapper;
+
+	@Override
+	public ServiceResult insertCfroomRsvt(CfroomRsvtVO cfroomRsvtVO) {
+		int status = cfroomRsvtMapper.insertCfroomRsvt(cfroomRsvtVO);
+		ServiceResult result;
+		if(status>0) {
+			result = ServiceResult.OK;
+		} else {
+			result = ServiceResult.FAILED;
+		}
+		return result;
+	}
+
+	@Override
+	public List<CfroomRsvtVO> selectCfroomRsvtList(String cfrommCd, String rsvtHr) {
+		return cfroomRsvtMapper.selectCfroomRsvtList(cfrommCd, rsvtHr);
+	}
+
+}

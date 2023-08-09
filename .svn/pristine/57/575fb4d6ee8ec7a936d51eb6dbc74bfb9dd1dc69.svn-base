@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.main.mapper.StuMainMapper">
+
+	<resultMap 	type="StorageVO" 			id="storageMap">
+		<id 	property="strNo" 			column="STR_NO"/>
+		<result property="strTitle" 		column="STR_TITLE"/>
+		<result property="strCn" 			column="STR_CN"/>
+		<result property="stuNo" 			column="STU_NO"/>
+		<result property="strRegDt" 		column="STR_REG_DT"/>
+		<result property="atchFileNo" 		column="ATCH_FILE_NO"/>
+		<result property="projNo" 			column="PROJ_NO"/>
+
+		<collection property="atchFileList" 	resultMap="atchFileMap"/>
+	</resultMap>
+
+
+	<resultMap type="AtchFileVO" 			id="atchFileMap">
+
+		<result property="atchFileNo" 		column="ATCH_FILE_NO"/>
+		<result property="atchFileSeq" 		column="ATCH_FILE_SEQ"/>
+		<result property="fileNm" 			column="FILE_NM"/>
+		<result property="fileExtn" 		column="FILE_EXTN"/>
+		<result property="fileRgtr" 		column="FILE_RGTR"/>
+		<result property="fileBengDt" 		column="FILE_BENG_DT"/>
+		<result property="filePath" 		column="FILE_PATH"/>
+		<result property="fileSize" 		column="FILE_SIZE"/>
+		<result property="fileUpdRgtr" 		column="FILE_UPD_RGTR"/>
+		<result property="fileUpdDate" 		column="FILE_UPD_DATE"/>
+		<result property="fileTbNm" 		column="FILE_TB_NM"/>
+		<result property="fileThumb" 		column="FILE_THUMB"/>
+
+	</resultMap>
+
+
+	<select id="projList" parameterType="String" resultType="ProjListVO">
+		SELECT
+			B.PROJ_NM
+		FROM
+			TB_PRO_MEM A
+			JOIN TB_PROJ B ON A.PROJ_NO = B.PROJ_NO
+		WHERE
+			A.STU_NO = #{stuNo}
+	</select>
+
+
+	<select id="storageList" resultMap="storageMap" parameterType="string">
+
+		SELECT
+		      A.STR_NO
+		    , A.STR_TITLE
+		    , A.STR_CN
+		    , A.STU_NO
+		    , A.STR_REG_DT
+		    , A.ATCH_FILE_NO
+		    , A.PROJ_NO
+		    , B.ATCH_FILE_NO
+		    , B.ATCH_FILE_SEQ
+		    , B.FILE_NM
+		    , B.FILE_EXTN
+		    , B.FILE_RGTR
+		    , B.FILE_BENG_DT
+		    , B.FILE_PATH
+		    , B.FILE_SIZE
+		    , B.FILE_UPD_RGTR
+		    , B.FILE_UPD_DATE
+		    , B.FILE_TB_NM
+		    , B.FILE_THUMB
+	        , C.USER_NM
+		FROM
+		    TB_STORAGE A
+		RIGHT JOIN
+		    TB_ATCH_FILE B ON A.ATCH_FILE_NO = B.ATCH_FILE_NO
+	    JOIN
+	        TB_STU C ON A.STU_NO = C.STU_NO
+		WHERE
+		    A.STU_NO =  #{stuNo}
+	</select>
+
+</mapper>

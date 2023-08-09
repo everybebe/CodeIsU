@@ -1,0 +1,180 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<div class="card" id="issueList"></div>
+
+<script>
+  const projNo = "a005";
+  let page;
+  let searchType;
+  let searchWord;
+
+  const issueList = (projNo, page, searchType, searchWord) => {
+    if (page == null) {
+      page = 1;
+    }
+
+    if (searchType == null) {
+      searchType = "title";
+    }
+    if (searchType == "writer") {
+      searchType = "writer";
+    }
+
+    $.ajax({
+      url: "/pms/project/issueList",
+      data: {
+        projNo: projNo,
+        currentPage: page,
+        searchType: searchType,
+        searchWord: searchWord,
+      },
+      type: "get",
+      dataType: "json",
+      success: function (res) {
+        console.log(res);
+        console.log(res.pagingVO);
+        console.log(res.pagingVO.dataList);
+
+       const dataList = res.pagingVO.dataList;
+        const pagingHTML = res.pagingVO.pagingHTML;
+
+        let projectissueList = `
+
+        <form class="input-group input-group-outline" id="searchForm">
+            <input type="hidden" name="page" id="page" />
+            <div class="col-md-1">
+                <div class="input-group input-group-static mb-4">
+                <select class="form-control" id="searchType">
+                    <option value="title" id="searchTypeTitle">제목</option>
+                    <option value="writer" id="searchTypeWriter">작성자</option>
+                    <option value="titleWriter" id="searchTypeTitleWriter">제목+작성자</option>
+                </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="ms-md-auto">
+                <label class="form-label"></label>
+                <input type="text" id="searchWord" name="searchWord" class="form-control" placeholder="Search" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="searchBtn" class="btn btn-outline-secondary">
+                <i class="fas fa=search"></i>검색
+                </button>
+            </div>
+
+            <div class="col-md-2">
+                <button type="button" id="insertStorageBtn" class="btn btn-outline-secondary">
+                <i class="fas fa=search"></i>등록
+                </button>
+            </div>
+
+        </form>
+
+
+  <div class="table-responsive">
+  <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">
+            번호
+          </th>
+          <th scope="col">
+            이슈코드
+          </th>
+          <th scope="col">
+            제목
+          </th>
+          <th scope="col">
+            이슈 상태
+          </th>
+          <th scope="col">
+            등록자
+          </th>
+
+          <th scope="col">
+            등록일
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        `;
+        for (let i = 0; i < dataList.length; i++) {
+          projectissueList += `
+        <tr>
+          <td>\${dataList[i].rnum}</td>
+
+          <td>\${dataList[i].issueCd}</td>
+
+          <td>\${dataList[i].issueTtl}</td>
+
+          <td>\${dataList[i].issueSttsCd}</td>
+
+          <td>\${dataList[i].userNm}</td>
+
+          <td>\${dataList[i].issueRegDt}</td>
+
+        </tr>
+        `;
+        }
+
+        projectissueList += `
+            </tbody>
+            </table>
+        </div>
+        <div class="card-footer clearfix" id="pagingArea">
+            \${pagingHTML}
+        </div>
+        `;
+        $("#issueList").html(projectissueList);
+        $("#page").val(page);
+        $("#searchType").val(searchType);
+        $("#searchWord").val(searchWord);
+
+        console.log(
+          "page, searchType, searchWord : ",
+          page,
+          searchType,
+          searchWord
+        );
+        pagingClick();
+
+      },
+      error: function (xhr) {
+        console.log("issueList 상태: " + xhr.status);
+      },
+    });
+  };
+
+  issueList(projNo, page, searchType, searchWord);
+
+  const pagingClick = () => {
+    let searchForm = $("#searchForm");
+    let pagingArea = $("#pagingArea");
+
+    let searchBtn = $("#searchBtn");
+
+    let shWord = "";
+    let shType = "";
+
+    searchBtn.on("click", function () {
+      shWord = $("#searchWord").val();
+      shType = $("#searchType").val();
+
+      issueList(projNo, page, shType, shWord);
+    });
+
+    pagingArea.on("click", "a", function (event) {
+      event.preventDefault();
+      var pageNo = $(this).data("page");
+      searchForm.find("#page").val(pageNo);
+
+      shWord = $("#searchWord").val();
+      shType = $("#searchType").val();
+
+      issueList(projNo, pageNo, shType, shWord);
+    });
+  };
+
+ </script>

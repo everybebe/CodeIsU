@@ -1,0 +1,13 @@
+package team.tttt.pms.project.createProj.service;
+
+import java.util.List;
+import team.tttt.pms.project.vo.ProjVO;
+
+
+public interface createProjService {
+
+	public List<ProjVO> projList();
+
+
+
+}

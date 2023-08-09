@@ -1,0 +1,18 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div class="container">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" id="createBtn">만들기</button>
+    </div>
+    <button type="button" class="btn btn-primary" id="qstnBtn">질문</button>
+
+</div>
+<script>
+    var createBtn = document.querySelector("#createBtn");
+    createBtn.addEventListener("click",function(){
+        location.href = "/tch/class/asmt/asmtform?sbjctCd=" + "${sbjctCd}";
+    })
+    var createBtn = document.querySelector("#qstnBtn");
+    createBtn.addEventListener("click",function(){
+        location.href = "/tch/class/qstn?sbjctCd=" + "${sbjctCd}";
+    })
+</script>

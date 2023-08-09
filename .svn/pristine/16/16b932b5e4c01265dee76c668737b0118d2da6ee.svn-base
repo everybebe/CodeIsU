@@ -1,0 +1,37 @@
+package team.tttt.pms.stu.vo;
+
+import java.util.List;
+
+import lombok.Data;
+
+@Data
+public class ResAcbgInfoVO {
+	private String acbgCd;
+	private String resumeNo;
+	private String schlSeCd;
+	private String schlNm;
+	private String departNm;
+	private String mtcltnYm;
+	private String grdtnYm;
+	private String grdtnState;
+	private String schlCredit;
+
+	private String userCredit;
+	private String baseCredit;
+
+	public ResAcbgInfoVO() {};
+
+	public void setBaseCredit(String baseCredit) {
+		this.schlCredit = userCredit + "/" + baseCredit;
+	}
+
+	public void setSchlCredit(String schlCredit) {
+		String[] credit = schlCredit.split("/");
+		this.userCredit = credit[0];
+		this.baseCredit = credit[1];
+	}
+
+
+
+
+}

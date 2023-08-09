@@ -1,0 +1,26 @@
+package team.tttt.pms.emp.attd.web;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.emp.attd.service.AttdService;
+
+@Slf4j
+@Controller
+@RequestMapping("/emp/stuman")
+public class AttdController {
+
+	@Inject
+	AttdService attdService;
+
+	@GetMapping("/attend")
+	public String attend() {
+		log.info("attend()...실행");
+
+		return "emp/com/stumanage/attd/attdMain";
+	}
+}

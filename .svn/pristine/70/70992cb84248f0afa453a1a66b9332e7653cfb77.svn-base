@@ -1,0 +1,17 @@
+package team.tttt.pms.stu.academiSupport.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.stu.vo.CfroomRsvtVO;
+
+@Mapper
+public interface CfroomRsvtMapper {
+	public List<CfroomRsvtVO> selectCfroomRsvtList(@Param("cfrommCd")String cfrommCd, @Param("rsvtHr")String rsvtHr);
+
+	public int insertCfroomRsvt(CfroomRsvtVO cfroomRsvtVO);
+
+}

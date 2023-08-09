@@ -1,0 +1,151 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+
+<style>
+  .chatting-area {
+    border: 1px solid black;
+    margin: auto;
+  }
+
+  #exit-area {
+    text-align: right;
+    margin-bottom: 10px;
+  }
+
+  .display-chatting {
+    width: 100%;
+    height: 300px;
+    border: 1px solid black;
+    overflow: auto;
+    /*스크롤 처럼*/
+    list-style: none;
+    padding: 10px 10px;
+    z-index: 1;
+  }
+
+  .chat {
+    display: inline-block;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #eee;
+  }
+
+  .input-area {
+    width: 100%;
+    display: flex;
+  }
+
+  #inputChatting {
+    width: 80%;
+    resize: none;
+  }
+
+  #send {
+    width: 20%;
+  }
+
+  .myChat {
+    text-align: right;
+  }
+
+  .myChat > p {
+    background-color: gold;
+  }
+
+  .chatDate {
+    font-size: 10px;
+  }
+
+  .img {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: -100;
+  }
+</style>
+
+<input type="button" value="입장" name="chatBtn" onclick="openSocket();" />
+
+<div class="card">
+  <div class="chatting-area" id="chatting-area">
+    <div id="exit-area">
+      <button id="exit-btn" onclick="closeSocket();">나가기</button>
+    </div>
+
+    <ul class="display-chatting" id="messages"></ul>
+
+    <div class="input-area">
+      <input
+        type="text"
+        id="sender"
+        value="${memVO.stuNo}"
+        style="display: none"
+      />
+      <input
+        type="hidden"
+        id="senderId"
+        value="${memVO.userNm}"
+        style="display: none"
+      />
+      <input type="text" id="messageinput" />
+      <button id="send" type="button" onclick="send();">보내기</button>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var ws;
+  var messages = document.getElementById("messages");
+
+  function openSocket() {
+    if (ws !== undefined && ws.readyState !== WebSocket.CLOSED) {
+      writeResponse("이미 접속중인 방입니다..");
+      console.log("${memberVO.memId}");
+      return;
+    }
+    //웹소켓 객체 만드는 코드
+    ws = new WebSocket("ws://localhost:80/echo");
+
+    ws.onopen = function (event) {
+      if (event.data === undefined) {
+        return;
+      }
+      writeResponse(event.data);
+    };
+
+    ws.onmessage = function (event) {
+      console.log("writeResponse");
+      console.log(event.data);
+      writeResponse(event.data);
+    };
+
+    ws.onclose = function (event) {
+      writeResponse("대화 종료");
+    };
+  }
+
+  function send() {
+    chatContent = document.getElementById("messageinput").value;
+    sender = document.getElementById("sender").value;
+    senderId = document.getElementById("senderId").value;
+    var text = chatContent + "," + sender;
+    ws.send(text);
+
+    console.log(chatContent + " --------- " + sender);
+
+    text = "";
+  }
+
+  function closeSocket() {
+    ws.close();
+  }
+
+  function writeResponse(text) {
+    messages.innerHTML += "<br/>" + text;
+  }
+
+  function clearText() {
+    console.log(messages.parentNode);
+    messages.parentNode.removeChild(messages);
+  }
+</script>

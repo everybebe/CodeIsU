@@ -1,0 +1,15 @@
+package team.tttt.pms.emp.attd.service.impl;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.emp.attd.mapper.AttdMapper;
+import team.tttt.pms.emp.attd.service.AttdService;
+
+@Service
+public class AttdServiceImpl implements AttdService{
+
+	@Inject
+	AttdMapper attdMapper;
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.tch.classroom.mapper.TchAsmtMapper">
+	<insert id="insertAsmt" parameterType="AsmtVO">
+		<selectKey keyProperty="asmtNo" order="BEFORE" resultType="int">
+			select SEQ_ASMT.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO TB_ASMT(
+			ASMT_NO
+			, ASMT_TTL
+			, ASMT_EXPLN
+			, ASMT_DDLN
+			, EMP_NO
+			, ASMT_DT
+			, SBJCT_CD
+		) VALUES(
+			#{asmtNo}
+			, #{asmtTtl}
+			, #{asmtExpln}
+			, TO_DATE(REPLACE(#{asmtDdln}, 'T', ' '),'YYYY-MM-DD HH24:MI')
+			, #{empNo}
+			, SYSDATE
+			, #{sbjctCd}
+		)
+	</insert>
+
+	<insert id="insertQst" parameterType="QstVO" useGeneratedKeys="true">
+		<selectKey keyProperty="qstNo" order="BEFORE" resultType="int">
+			select SEQ_QST.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO TB_QST(
+			QST_NO
+			, QST_CN
+			, ATCH_FILE_NO
+			, QST_CODE
+			, ASMT_NO
+			, QST_ANS
+
+		) VALUES(
+			#{qstNo}
+			, #{qstCn}
+			, 'qstFile'|| SEQ_QSTFILE.NEXTVAL
+			, #{qstCode}
+			, #{asmtNo}
+			, #{qstAns}
+		)
+	</insert>
+
+	<insert id="insertQstDtl" parameterType="QstDtlVO">
+		INSERT INTO TB_QST_DTL(
+			QST_DTL_NO
+			, QST_NO
+			, QST_DTL_CN
+		) VALUES(
+			#{qstDtlNo}
+			, #{qstNo}
+			, #{qstDtlCn}
+		)
+	</insert>
+</mapper>

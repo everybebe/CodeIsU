@@ -1,0 +1,5 @@
+package team.tttt.pms.emp.kalleave.service;
+
+public interface KalleaveService {
+
+}

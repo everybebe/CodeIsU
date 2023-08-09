@@ -1,0 +1,23 @@
+package team.tttt.pms.project.storage.service;
+
+import java.util.List;
+
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.vo.StorageVO;
+import team.tttt.pms.project.vo.PaginationInfoVO;
+
+public interface PmsStorageService {
+
+	List<StorageVO> storageList(PaginationInfoVO<StorageVO> pagingVO);
+
+	StorageVO getDetailStorage(String storageNo);
+
+	ServiceResult insertStorage(StorageVO insertStorage);
+
+	ServiceResult StorageUpdate(StorageVO updateStorage);
+
+	ServiceResult StorageDelete(String storageNo);
+
+	int selectBoardCount(PaginationInfoVO<StorageVO> pagingVO);
+
+}

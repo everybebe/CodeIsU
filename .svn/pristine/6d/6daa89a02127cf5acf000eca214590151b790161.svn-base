@@ -1,0 +1,13 @@
+package team.tttt.pms.common.user.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.common.vo.UserVO;
+
+@Mapper
+public interface UserTestMapper {
+
+	public int insertUser(UserVO userVO);
+
+
+}

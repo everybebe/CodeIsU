@@ -1,0 +1,87 @@
+package team.tttt.pms.emp.dscsn.web;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.emp.dscsn.service.DscsnService;
+import team.tttt.pms.emp.vo.ConsulReservationVO;
+import team.tttt.pms.emp.vo.ConsultingRoomVO;
+import team.tttt.pms.emp.vo.DscsnVO;
+
+@Slf4j
+@Controller
+@RequestMapping("/emp/dscsn")
+public class DscsnController {
+
+	@Inject
+	private DscsnService dscsnService;
+
+	@GetMapping("/dscsnBoard")
+	public String dscsnBoard() {
+		log.info("dscsnBoard()...실행");
+
+		return "emp/com/stumanage/dscsn/dscsnBoard";
+	}
+
+	@ResponseBody
+	@GetMapping("/dscsnNoList")
+	public List<DscsnVO> dscsnNoList(){
+		log.info("dscsnNoList()...실행");
+
+		List<DscsnVO> dscsnNoList = new ArrayList<DscsnVO>();
+
+		dscsnNoList = dscsnService.dscsnNoList();
+
+		return dscsnNoList;
+	}
+
+	@ResponseBody
+	@GetMapping("/dscsnApprovList")
+	public List<DscsnVO> dscsnApprovList(){
+		log.info("dscsnApprovList()...실행");
+
+		List<DscsnVO> dscsnApprovList = new ArrayList<DscsnVO>();
+
+		dscsnApprovList = dscsnService.dscsnApprovList();
+
+		return dscsnApprovList;
+	}
+
+	@ResponseBody
+	@GetMapping("/dscsnUnApprovList")
+	public List<DscsnVO> dscsnUnApprovList(){
+		log.info("dscsnUnApprovList()...실행");
+
+		List<DscsnVO> dscsnUnApprovList = new ArrayList<DscsnVO>();
+
+		dscsnUnApprovList = dscsnService.dscsnUnApprovList();
+
+		return dscsnUnApprovList;
+	}
+
+	@ResponseBody
+	@PostMapping(value = "/insertConsul", produces = "application/json;charset=utf-8")
+	public List<ConsultingRoomVO> insertConsul(@RequestBody ConsulReservationVO consulReservationVO){
+		log.info("insertConsul()...실행");
+
+		List<ConsultingRoomVO> consulList = dscsnService.consulList(consulReservationVO);
+
+		//업데이트를 위한 글 번호를 가져오기
+		//방번호 정보도 가져와야 함?
+		//그럼 상담 업데이트를 여기서 한면 안될거 같은디??
+		int dscsnNo = consulReservationVO.getDscsnNo();
+
+		return consulList;
+	}
+
+}

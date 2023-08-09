@@ -1,0 +1,36 @@
+package team.tttt.pms.project.createProj.service.impl;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.project.createProj.mapper.CreateProjMapper;
+import team.tttt.pms.project.createProj.service.createProjService;
+import team.tttt.pms.project.vo.ProjVO;
+
+@Service
+public class createProjServiceImpl implements createProjService{
+
+	@Inject
+	private CreateProjMapper createProjMapper;
+
+	@Override
+	public List<ProjVO> projList() {
+		return createProjMapper.projList();
+	}
+
+	@Override
+	public ServiceResult insertProj(ProjVO projVO) {
+		int cnt = createProjMapper.insertProj(projVO);
+		if(cnt > 0){
+			return ServiceResult.OK;
+
+		}
+		return ServiceResult.FAILED;
+	}
+
+
+}

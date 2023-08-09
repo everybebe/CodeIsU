@@ -1,0 +1,14 @@
+package team.tttt.pms.common.user.web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class Test3Controller {
+
+	@GetMapping("/ttt")
+	public String testView() {
+		return "test/newtemp";
+	}
+
+}

@@ -1,0 +1,31 @@
+package team.tttt.pms.project.Issue.service.impl;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.project.Issue.mapper.PmsIssueMapper;
+import team.tttt.pms.project.Issue.service.PmsIssueService;
+import team.tttt.pms.project.vo.IssueVO;
+import team.tttt.pms.project.vo.PaginationInfoVO;
+
+@Service
+public class PmsIssueServiceImpl implements PmsIssueService {
+
+	@Inject
+	private PmsIssueMapper mapper;
+
+	@Override
+	public int selectBoardCount(PaginationInfoVO<IssueVO> pagingVO) {
+		return mapper.selectBoardCount(pagingVO);
+	}
+
+	@Override
+	public List<IssueVO> getIssueList(PaginationInfoVO<IssueVO> pagingVO) {
+		// TODO Auto-generated method stub
+		return mapper.getIssueList(pagingVO);
+	}
+
+}

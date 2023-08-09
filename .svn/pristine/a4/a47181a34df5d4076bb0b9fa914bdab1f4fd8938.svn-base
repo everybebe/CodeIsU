@@ -1,0 +1,372 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+
+<style>
+  .outerKanban {
+    border: 1px solid black;
+  }
+
+  .innerKanban {
+    border: 1px solid black;
+    width: 300px;
+    height: 600px;
+  }
+
+  .container {
+    display: flex;
+  }
+  #myKanban {
+    overflow-x: auto;
+    padding: 20px 0;
+  }
+
+  .success {
+    background: #00b961;
+  }
+
+  .info {
+    background: #2a92bf;
+  }
+
+  .warning {
+    background: #f4ce46;
+  }
+
+  .error {
+    background: #fb7d44;
+  }
+
+  .custom-button {
+    background-color: #4caf50;
+    border: none;
+    color: white;
+    padding: 7px 15px;
+    margin: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+  .pre {
+    width: 50px;
+    height: 50px;
+  }
+
+  .circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+
+  .kanban-item {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .card .card-header {
+    padding: 0.32rem;
+  }
+</style>
+<link
+  rel="stylesheet"
+  href="${pageContext.request.contextPath}/common/sw/js/jkanban.min.css"
+/>
+<script src="${pageContext.request.contextPath}/common/sw/js/jkanban.js"></script>
+
+<div>
+  <div class="card mt-3 mb-3">
+    <div style="height: 40px" class="">
+      <div class="d-flex align-items-center me-2 mt-2">
+        <div class="d-flex align-items-center">
+          <div class="circle ms-1" style="background-color: #d71923"></div>
+          <p class="mb-0 me-3 ms-1 text-xs">긴급</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="circle" style="background-color: #d48834"></div>
+          <p class="mb-0 me-3 ms-1 text-xs">높음</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="circle" style="background-color: #465b8a"></div>
+          <p class="mb-0 me-3 ms-1 text-xs">보통</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="circle" style="background-color: #56726a"></div>
+          <p class="mb-0 me-3 ms-1 text-xs">낮음</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="myKanban"></div>
+  </div>
+</div>
+
+<button id="addDefault">Add "Default" board</button>
+<br />
+<button id="addToDo">Add element in "To Do" Board</button>
+<br />
+<button id="addToDoAtPosition">
+  Add element in "To Do" Board at position 2
+</button>
+<br />
+<button id="removeBoard">Remove "Done" Board</button>
+<br />
+<button id="removeElement">Remove "My Task Test"</button>
+
+<script>
+  projNo = "a005";
+
+  function getData(projNo) {
+    $.ajax({
+      url: "/pms/project/taskListOut?${_csrf.parameterName}=${_csrf.token}",
+      data: {
+        projNo: projNo,
+      },
+      type: "POST",
+      dataType: "json",
+      success: function (res) {
+        let wait = [];
+        let work = [];
+        let done = [];
+        let postpone = [];
+
+        res = res.map((data) => {
+          const userNms = data.asgList.map((item) => item.userNm);
+          return { ...data, userNms };
+        });
+
+        console.log("넘어온 데이터 : ", res);
+
+        for (let i = 0; i < res.length; i++) {
+          const taskStts = res[i].taskStts;
+
+          let priorityStyle = "";
+
+          if (res[i].taskPriority === "낮음") {
+            priorityStyle = 'style="background-color:#56726a"';
+          } else if (res[i].taskPriority === "보통") {
+            priorityStyle = 'style="background-color:#465b8a"';
+          } else if (res[i].taskPriority === "보통") {
+            priorityStyle = 'style="background-color:#d48834"';
+          } else {
+            priorityStyle = 'style="background-color:#d71923"';
+          }
+
+          title = `
+          <div class="card border-success">
+              <div class="card-header m-0 item_handle drag_handler" \${priorityStyle}>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2 ps-0">
+                    <img src="\${res[i].asgList[0].userProfile}" class="avatar avatar-sm rounded-3 me-3">
+                  </div>
+                  <div class="col-md-10">
+                    <div class="row text-m">
+                      담당자: \${res[i].userNms}
+                    </div>
+                    <div class="row text-xs">
+                      기한: \${res[i].taskBengDt} ~ \${res[i].taskDdlnDt}
+                    </div>
+                </div>
+                  <div class="row">
+                    업무명 : \${res[i].taskTitle}
+                    <input type="hidden" class="taskNo" value="\${res[i].taskNo}"/>
+                  </div>
+
+                  <div class="row">상태: \${taskStts}
+                  </div>
+                </div>
+              </div>
+          </div>
+          `;
+
+          // <div>
+          //   <div class="row">
+          //     <div class="col-md-9">
+          //     <div class="row">
+          //       <div class="col-md-2 ps-0">
+          //       <img src="\${res[i].asgList[0].userProfile}" class="avatar avatar-sm rounded-3 me-3">
+          //       </div>
+          //       <div class="col-md-10">
+          //         <div class="row text-m">
+          //           담당자: \${res[i].userNms}
+          //         </div>
+          //         <div class="row text-xs">
+          //           기한: \${res[i].taskBengDt} ~ \${res[i].taskDdlnDt}
+          //         </div>
+          //         </div>
+          //         </div>
+          //         <div class="row">
+          //           업무명 : \${res[i].taskTitle}
+          //           <input type="hidden" class="taskNo" value="\${res[i].taskNo}"/>
+          //         </div>
+
+          //           <div class="row">상태: \${taskStts}
+          //         </div>
+          //       </div>
+          //     </div>
+          //   </div>
+
+          const htmlTemplate = {
+            title: title,
+          };
+
+          switch (taskStts) {
+            case "대기":
+              wait.push(htmlTemplate);
+              break;
+            case "진행":
+              work.push(htmlTemplate);
+              break;
+            case "완료":
+              done.push(htmlTemplate);
+              break;
+            case "연기":
+              postpone.push(htmlTemplate);
+              break;
+            default:
+              // Handle any other cases if necessary
+              break;
+          }
+        }
+        console.log(
+          "wait : 1",
+          wait,
+          "work : ",
+          work,
+          "done : ",
+          done,
+          "postpone : ",
+          postpone
+        );
+
+        var KanbanTest = new jKanban({
+          element: "#myKanban",
+          gutter: "10px",
+          widthBoard: "370px",
+          itemHandleOptions: {
+            enabled: true,
+          },
+          click: function (el) {
+            console.log("자세히보기");
+            console.log(el);
+          },
+          context: function (el, e) {
+            console.log("자세히보기??");
+            console.log(el);
+            console.log(e);
+          },
+          dropEl: function (el, target, source, sibling) {
+            console.log("drop 으로 옴김");
+            console.log(el);
+            console.log(target);
+            console.log(source);
+            console.log(sibling);
+          },
+          buttonClick: function (el, boardId) {
+            console.log("버튼클릭");
+          },
+          /*
+          ,
+          itemAddOptions: {
+            enabled: true,
+            content: "+ Add New Card",
+            class: "custom-button",
+            footer: true,
+          }
+          */ boards: [
+            {
+              id: "_wait",
+              title: "상태 : 대기",
+              class: "info,good",
+              dragTo: ["_working", "_done", "_postPone"],
+              item: wait,
+            },
+            {
+              id: "_working",
+              title: "상태 : 진행중",
+              class: "warning",
+              item: work,
+            },
+            {
+              id: "_done",
+              title: "상태 : 완료",
+              class: "success",
+              dragTo: ["_working", "_wait", "_postPone"],
+              item: done,
+            },
+            {
+              id: "_postPone",
+              title: "상태 : 지연",
+              class: "info",
+              dragTo: ["_working", "_wait", "_done"],
+              item: postpone,
+            },
+          ],
+        });
+
+        var toDoButton = document.getElementById("addToDo");
+        toDoButton.addEventListener("click", function () {
+          KanbanTest.addElement("_wait", {
+            title: "Test Add",
+          });
+        });
+
+        var toDoButtonAtPosition = document.getElementById("addToDoAtPosition");
+        toDoButtonAtPosition.addEventListener("click", function () {
+          KanbanTest.addElement(
+            "_wait",
+            {
+              title: "Test Add at Pos",
+            },
+            1
+          );
+        });
+
+        var addBoardDefault = document.getElementById("addDefault");
+        addBoardDefault.addEventListener("click", function () {
+          KanbanTest.addBoards([
+            {
+              id: "_default",
+              title: "Kanban Default",
+              item: [
+                {
+                  title: "Default Item",
+                },
+                {
+                  title: "Default Item 2",
+                },
+                {
+                  title: "Default Item 3",
+                },
+              ],
+            },
+          ]);
+        });
+
+        var removeBoard = document.getElementById("removeBoard");
+        removeBoard.addEventListener("click", function () {
+          KanbanTest.removeBoard("_done");
+        });
+
+        var removeElement = document.getElementById("removeElement");
+        removeElement.addEventListener("click", function () {
+          KanbanTest.removeElement("_test_delete");
+        });
+
+        var allEle = KanbanTest.getBoardElements("_wait");
+        allEle.forEach(function (item, index) {
+          //console.log(item);
+        });
+      },
+    });
+  }
+  /*   $(document).ready(function () {
+    document.querySelector(".kanban-drag").style.padding = "0";
+  }); */
+
+  getData(projNo);
+</script>

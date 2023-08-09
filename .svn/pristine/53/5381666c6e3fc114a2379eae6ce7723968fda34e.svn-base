@@ -1,0 +1,15 @@
+package team.tttt.pms.project.createProj.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.project.vo.ProjVO;
+
+@Mapper
+public interface CreateProjMapper {
+
+	public List<ProjVO> projList();
+
+
+}

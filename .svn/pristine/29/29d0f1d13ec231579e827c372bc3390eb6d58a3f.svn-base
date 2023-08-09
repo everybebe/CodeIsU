@@ -1,0 +1,159 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<style>
+#mainCont{
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.mainContainer{
+	width: 50%;
+	height: 100%;
+	padding: 10px;
+}
+
+#mainTr{
+	cursor: pointer;
+}
+
+#mainTr:hover {
+	background-color: lightgray;
+}
+
+#indiv{
+	display: flex;
+	justify-content: flex-end;
+}
+
+.impolTd{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+</style>
+<body>
+	<h1>공통코드 메인</h1>
+
+<div id="mainCont">
+	<div id="firstBox" class="mainContainer">
+		<table class="table">
+			<thead class="table-dark">
+				<tr>
+					<th style="text-align: center;" colspan="2">코드 그룹</th>
+				</tr>
+				<tr>
+					<th>코드 유형ID</th>
+					<th>코드 유형명</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:set value="${cmtyList }" var="cmtylist"/>
+				<c:choose>
+					<c:when test="${empty cmtylist }">
+						<tr>
+							<td colspan="2">조회할 그룹이 없습니다.</td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${cmtylist }" var="cmty">
+							<tr id="mainTr" onclick="trClick('${cmty.cdTypeId }')">
+								<td>${cmty.cdTypeId }</td>
+								<td class="impolTd">
+									${cmty.cdTypeNm }
+									<div>
+										<button class="btn btn-secondary btn-sm">수정</button>
+		    							<button class="btn btn-secondary btn-sm">삭제</button>
+		    						</div>
+								</td>
+							</tr>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+		<div>
+			<button type="button" id="addCodeType" class="btn btn-secondary">등록</button>
+		</div>
+	</div>
+
+	<div id="secondBox" class="mainContainer">
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+
+})
+
+function trClick(cdTypeId){
+	console.log(cdTypeId);
+
+	var cdTypeData = {
+		"cdTypeId" : cdTypeId
+	}
+	codeInfo(cdTypeData);
+}
+
+function codeInfo(cdTypeData){
+	console.log(cdTypeData);
+
+	$.ajax({
+		url:"/emp/cmcode/codelist",
+		type:"get",
+		data:cdTypeData,
+		dataType:"json",
+		success:function(res){
+			console.log("res",res);
+
+			var str = `
+				<table class="table">
+				<thead class="table-dark">
+					<tr>
+						<th style="text-align: center;" colspan="2">코드 목록</th>
+					</tr>
+					<tr>
+						<th>코드명</th>
+						<th>코드 설명</th>
+					</tr>
+				</thead>
+				<tbody>`
+
+			if(res.length == 0){
+				str += `
+					<tr>
+						<td colspan="2">조회할 코드가 없습니다.</td>
+					</tr>`
+			}else{
+				for(var i=0; i<res.length; i++){
+					str += `
+						<tr>
+							<td>\${res[i].cdNm}</td>
+							<td class="impolTd">
+								\${res[i].cdExpln}
+								<div>
+									<button class="btn btn-secondary btn-sm">수정</button>
+	    							<button class="btn btn-secondary btn-sm">삭제</button>
+	    						</div>
+							</td>
+						<tr>`
+				}
+			}
+
+			str +=	`
+				</tbody>
+			</table>
+			<div>
+				<button type="button" id="addCode" class="btn btn-secondary">등록</button>
+			</div>`
+
+			$("#secondBox").html(str);
+		},
+		error:function(xhr){
+
+		}
+	})
+}
+</script>
+</body>

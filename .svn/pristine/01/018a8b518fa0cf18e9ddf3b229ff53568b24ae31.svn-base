@@ -1,0 +1,20 @@
+package team.tttt.pms.common.user.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.common.vo.UserRoleVO;
+import team.tttt.pms.common.vo.UserVO;
+
+@Mapper
+public interface UserMapper {
+	public void create(UserVO member);
+	public void createAuth(UserRoleVO memberAuth);
+	public List<UserVO> list();
+	public UserVO read(String userNo);
+	public void modify(UserVO member);
+	public void deleteAuth(int userNo);
+	public void delete(int userNo);
+	public UserVO readByUserNo(String username);
+}

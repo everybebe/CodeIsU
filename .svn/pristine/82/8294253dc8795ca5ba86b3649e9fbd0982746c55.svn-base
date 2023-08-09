@@ -1,0 +1,77 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<style>
+.pr-0{
+    padding-right: 0px;
+}
+</style>
+<div class="container">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" id="enrollBtn">신청</button>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-2">
+                    <div class="col-2 pr-0">성명</div>
+                    <div class="col-10">${stuVo.userNm}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-2 pr-0">생년월일</div>
+                    <div class="col-10">${stuVo.userBrdt}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-2 pr-0">수강과정</div>
+                    <div class="col-10">${stuVo.lectureRoomVO.lectureRoomNm}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-2 pr-0">종류</div>
+                    <div class="col-10">
+                        <select class="form-select mr-sm-2" id="inlineFormCustomSelect">
+                            <option selected value="">조퇴</option>
+                            <option value="1">외출</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-2 pr-0">신청날짜</div>
+                    <div class="col-10"><input type="datetime-local" class="form-control attdanDt" value="2008-05-13T22:33:00"></div>
+                </div>
+                <div class="row">
+                    <div class="col-2 pr-0">사유</div>
+                    <div class="col-10"><textarea class="form-control" rows="3" style="height: 103px;"></textarea></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary">신청하기</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<script>
+// 현재 날짜 가져오기
+var currentDate = new Date(); // 현재 날짜와 시간 가져오기
+var year = currentDate.getFullYear(); //년
+var month = currentDate.getMonth() + 1; // 월
+var date = currentDate.getDate(); // 일
+var currDt = year + "-" + (month < 10 ? "0" + month : month) + "-" + (date < 10 ? "0" + date : date); // 오늘날짜
+
+// modal input date에 현재 날짜 넣기
+var modal = new bootstrap.Modal('#myModal', {});
+
+// modal에서
+var enrollBtn = document.querySelector("#enrollBtn");
+enrollBtn.addEventListener("click", function() {
+    modal.show();
+    var attdanDt = document.querySelector(".attdanDt");
+    attdanDt.value = currDt;
+})
+</script>

@@ -1,0 +1,156 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+
+<div>
+	<h1>테스트 페이지 입니다.</h1>
+
+	<button id="sBtn" type="button">입실 버튼</button>
+	<button id="eBtn" type="button" disabled>퇴실 버튼</button>
+
+	<div id="clock"></div>
+
+
+	<input type="text" id="dDay" value="" placeholder="날짜">
+	<input type="text" id="sTime" value="" placeholder="입실시간">
+	<input type="text" id="eTime" value="" placeholder="퇴실시간">
+</div>
+<script>
+var header = '${_csrf.headerName}';
+var token =  '${_csrf.token}';
+var userNo = "<sec:authentication property="principal.member.userNo"/>"
+
+startTime()
+
+$(function(){
+	let sBtn = $("#sBtn");
+	let eBtn = $("#eBtn");
+
+	userCheck(userNo);
+
+	//입실 버튼 클릭 시
+	sBtn.on("click", function(){
+		let time = $("#clock").text();
+		let dayInfo = $("#dDay").val();
+
+		$("#sTime").val(time);
+
+		data = {
+			"attdAbmiYmd" : time,
+			"stuNo" : userNo,
+			"attdDt" : dayInfo
+		}
+
+		inClass(data);
+	})
+
+	//퇴실 버튼 클릭 시
+	eBtn.on("click", function(){
+		let time = $("#clock").text();
+
+		$("#eTime").val(time);
+
+		//시간, 날짜 가져오고 insert
+	})
+
+	//1초마다 시간과 분이 0인지 확인 즉 08시 00분인지를 확인
+	//08시 00분인 되면 입실 버튼 활성화, 퇴실버튼 비활성화
+	setInterval(function() {
+		let today = new Date();
+		let hours = today.getHours();
+		let minutes = today.getMinutes();
+
+		if (hours === 8 && minutes === 0) {
+			sBtn.prop("disabled", false);
+			eBtn.prop("disabled", true);
+		}
+	}, 1000); // 1초마다 확인
+})
+
+function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('clock').innerHTML =
+    h + ":" + m + ":" + s;
+    var t = setTimeout(startTime, 500);
+}
+
+function checkTime(i) {
+    if (i < 10) {i = "0" + i}; // 숫자가 10보다 작을 경우 앞에 0을 붙여줌
+    return i;
+}
+
+function userCheck(userNo){
+	$.ajax({
+		url : "/stu/dong/usercheck",
+		type : "get",
+		data : {"userNo" : userNo},
+		dataType : "text",
+		success : function(res){
+			console.log(res)
+
+			if(res == ""){
+				attdInsert(userNo);
+			}else{
+				$("#dDay").val(res);
+			}
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+
+function attdInsert(userNo){
+	$.ajax({
+		url : "/stu/dong/attdInsert",
+		type : "post",
+		contentType : "application/json;charset=utf-8",
+		beforeSend : function(xhr){
+			xhr.setRequestHeader(header, token);
+		},
+		data : userNo,
+		dataType : "text",
+		success : function(res){
+			console.log(res)
+
+			if(res == "실패"){
+				alert("실패");
+			}else{
+				$("#dDay").val(res);
+			}
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+
+function inClass(data){
+	$.ajax({
+		url : "/stu/dong/inClass",
+		type : "post",
+		contentType : "application/json;charset=utf-8",
+		beforeSend : function(xhr){
+			xhr.setRequestHeader(header, token);
+		},
+		data : JSON.stringify(data),
+		dataType : "text",
+		success : function(res){
+			console.log(res)
+			
+			if(res === "OK"){
+				$("#sTime").prop("disabled", true);
+				$("#eTime"),prop("disabled", false);
+			}
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+</script>

@@ -1,0 +1,13 @@
+package team.tttt.pms.emp.cmcode.service;
+
+import java.util.List;
+
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.emp.vo.cmTypeVO;
+
+public interface CmCodeService {
+
+	public List<cmTypeVO> cmtyList();
+	public List<CmCdVO> codeList(String cdTypeId);
+
+}

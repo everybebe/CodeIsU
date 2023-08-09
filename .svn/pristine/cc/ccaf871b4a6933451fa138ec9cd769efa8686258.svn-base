@@ -1,0 +1,150 @@
+package team.tttt.pms.common.user.web;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.user.service.UserService;
+import team.tttt.pms.common.vo.SmsVO;
+
+@Slf4j
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+	@Inject
+	private UserService userService;
+
+	@RequestMapping(value = "/login")
+	public String test01() {
+
+		return "common/user/login";
+	}
+
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String userLogout(HttpServletRequest request, HttpServletResponse response) {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    if (authentication != null) {
+	        new SecurityContextLogoutHandler().logout(request, response, authentication);
+	        String cookieName = "remember-me";
+	        Cookie cookie = new Cookie(cookieName, null);
+	        cookie.setMaxAge(0);
+	        cookie.setPath(StringUtils.hasLength(request.getContextPath()) ? request.getContextPath() : "/");
+	        response.addCookie(cookie);
+	        return "redirect:/";
+	    }
+
+	    return "redirect:/user/login";
+	}
+
+
+
+	@RequestMapping(value = "log")
+	public String logoutStartPage() {
+		return "common/user/log";
+	}
+
+	@RequestMapping(value = "/signtest")
+	public String signupTest() {
+		return "common/user/signupTest";
+	}
+
+
+	@ResponseBody
+	@RequestMapping(value = "/phonecheck", method = RequestMethod.POST)
+	public String phoneCheck(@RequestParam Map<String, String> phoneInfo) {
+
+		ServiceResult result = userService.phoneCheck(phoneInfo);
+
+		if(result == ServiceResult.OK) { // OK시 문자 발송
+
+			ServiceResult sendRst = userService.sendMessage(phoneInfo.get("joinPhone"));
+		}
+		return result.name();
+	}
+
+	@ResponseBody
+	@PostMapping(value = "/numcheck", produces = "application/json;charset=utf-8")
+	public String numCheck(@RequestBody SmsVO replyNum, HttpSession session) {
+		log.info("[사용자문자인증전송값] " + replyNum.getSmsCn());
+
+		ServiceResult result = userService.matchNum(replyNum);
+		if(result == ServiceResult.MATCH) {
+			session.setAttribute("userNm", replyNum.getUserNm());
+			session.setAttribute("userPhone", replyNum.getSmsRcvr());
+		}
+		return result.name();
+	}
+
+
+	@RequestMapping(value = "/signup", method = RequestMethod.GET)
+	public String signup(HttpSession session, HttpServletResponse res, Model model) throws IOException, ParseException {
+		// 해당세션없으면 에러페이지 이동 만들어야함
+		String userNm = (String) session.getAttribute("userNm");
+		String userPhoneno = (String) session.getAttribute("userPhone");
+		session.invalidate();
+
+//		Map<String, String> userInfo = userService.readSvlfNm(userNm, userPhoneno);
+//		System.out.println(userInfo);
+		Map<String, String> userData = new HashMap<String, String>();
+
+
+//
+//
+//		userData.put("svlfNm", userInfo.get("SVLF_NM"));
+//		userData.put("userNo", userInfo.get("STU_NO"));
+//
+//
+//        LocalDate userBrdt = LocalDate.parse(userInfo.get("USER_BRDT"), DateTimeFormatter.ofPattern("yyyyMMdd"));
+//
+//		userData.put("userBrdt", userBrdt.toString());
+//		userData.put("userNm", userNm);
+//		userData.put("userPhoneno", userPhoneno);
+//
+//		model.addAttribute("userData", userData);
+
+		// 회원정보 select해오기 이름,유저phone -> 연수번호 (이름, 핸드폰번호, 연수반)
+
+
+
+		return "common/user/signup";
+
+	}
+
+	@RequestMapping(value = "/signup", method = RequestMethod.POST)
+	public String signupProcess(@RequestParam Map<String, String> test) {
+
+		ServiceResult result;
+
+//		result = userService.insertUser(userVO);
+
+		System.out.println(test);
+		return "common/user/signup";
+
+	}
+}

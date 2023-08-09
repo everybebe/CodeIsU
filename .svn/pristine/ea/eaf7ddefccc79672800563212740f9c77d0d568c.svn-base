@@ -1,0 +1,13 @@
+package team.tttt.pms.stu.academiSupport.service;
+
+import java.util.List;
+
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.stu.vo.CfroomRsvtVO;
+
+public interface CfroomRsvtService {
+	public ServiceResult insertCfroomRsvt(CfroomRsvtVO cfroomRsvtVO);
+
+	public List<CfroomRsvtVO> selectCfroomRsvtList(String cfrommCd, String rsvtHr);
+}

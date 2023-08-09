@@ -1,0 +1,41 @@
+package team.tttt.pms.stu.resume.web;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.vo.CustomUser;
+import team.tttt.pms.common.vo.UserVO;
+import team.tttt.pms.stu.vo.ResumeVO;
+
+@Controller
+@Slf4j
+@RequestMapping("/stu/resume")
+public class ResumeController {
+
+	public String resumeMain(Authentication auth, Model model) {
+		CustomUser mVO = (CustomUser) auth.getPrincipal();
+		UserVO userVO = mVO.getMember();
+		model.addAttribute("user", userVO);
+		return null;
+
+	}
+
+
+	@GetMapping("/write")
+	public String resumeWrite() {
+
+		return "stu/com/resume/write";
+	}
+
+	@PostMapping("/write")
+	public String resumeInsert(ResumeVO resumeVO) {
+
+		System.out.println(resumeVO);
+		return null;
+	}
+}

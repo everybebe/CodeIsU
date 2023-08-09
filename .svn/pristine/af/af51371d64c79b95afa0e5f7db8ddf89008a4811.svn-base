@@ -1,0 +1,23 @@
+package team.tttt.pms.tch.damdang.web;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.tch.damdang.service.TchProjService;
+
+@Slf4j
+@Controller
+@RequestMapping("/tch")
+public class TchProjController {
+	@Inject
+	private TchProjService tchProjService;
+
+	@GetMapping("dam/proj")
+	public String proj() {
+		return "tch/com/damdang/proj";
+	}
+}

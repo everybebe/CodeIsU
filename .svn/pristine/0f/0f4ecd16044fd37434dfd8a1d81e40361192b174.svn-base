@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.createProj.mapper.CreateProjMapper">
+
+<select id="projList" resultType="ProjVO" >
+SELECT
+PROJ_NM
+, PROJ_EXPLN
+, PROJ_TNOPE
+, PROJ_BGNG_DT
+, PROJ_DDLN_DT
+, PROJ_STTR
+FROM TB_PROJ
+</select>
+
+</mapper>

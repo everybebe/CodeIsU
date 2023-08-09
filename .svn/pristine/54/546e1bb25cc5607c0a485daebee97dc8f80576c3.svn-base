@@ -1,0 +1,26 @@
+package team.tttt.pms.common.user.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.common.vo.DDITMemberVO;
+
+@Mapper
+public interface LoginMapper {
+
+	public DDITMemberVO idCheck(String memId);
+
+	public int signup(DDITMemberVO memberVO);
+
+	public DDITMemberVO loginCheck(DDITMemberVO memberVO);
+
+	public String idForgetProcess(DDITMemberVO member);
+
+	public String pwForgetProcess(DDITMemberVO member);
+
+
+	public void signupAuth(int memNo);
+
+	public DDITMemberVO readByUserId(String username);
+
+
+}

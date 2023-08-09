@@ -1,0 +1,26 @@
+package team.tttt.pms.emp.schedule.web;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.emp.schedule.service.ScheduleService;
+
+@Slf4j
+@Controller
+@RequestMapping("/emp/class")
+public class scheduleController {
+
+	@Inject
+	private ScheduleService scheduleService;
+
+	@GetMapping("/schedule")
+	public String scheduleMain() {
+		log.info("scheduleMain()...실행");
+
+		return "emp/com/class/schedule/scheduleMain";
+	}
+}

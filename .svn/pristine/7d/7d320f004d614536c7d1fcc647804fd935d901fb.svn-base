@@ -1,0 +1,14 @@
+package team.tttt.pms.tch.vo;
+
+import java.util.List;
+
+public class QstVO {
+	private String qstNo;
+	private String qstCn;
+	private String atchFileNo;
+	private String qstCode;
+	private String asmtNo;
+	private String qstAns;
+	private List<QstDtlVO> qstDtlList;
+
+}

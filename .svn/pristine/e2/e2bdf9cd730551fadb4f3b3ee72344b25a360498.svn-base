@@ -1,0 +1,140 @@
+package team.tttt.pms.emp.svlf.web;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.emp.svlf.service.SvlfService;
+import team.tttt.pms.emp.vo.EmpVO;
+import team.tttt.pms.emp.vo.SvlfVO;
+
+@Slf4j
+@Controller
+@RequestMapping("/svlf")
+public class SvlfController {
+
+	@Inject
+	private SvlfService svlfService;
+
+	@GetMapping("/svlfList")
+	public String svlfList(Model model) {
+		log.info("svlfList()...실행");
+
+		List<SvlfVO> svlfList = new ArrayList<SvlfVO>();
+
+		svlfList = svlfService.svlfList();
+
+		model.addAttribute("svlfList", svlfList);
+
+		return "emp/com/svlf/svlfList";
+	}
+
+	@GetMapping("/svlfForm")
+	public String svlfForm(Model model) {
+		log.info("svlfForm()...실행");
+
+		List<CmCdVO> cmCdList = new ArrayList<CmCdVO>();
+		List<EmpVO> tchList = new ArrayList<EmpVO>();
+
+		cmCdList = svlfService.cmCdList();
+		tchList = svlfService.checkDepartCd();
+
+		model.addAttribute("cmCdList", cmCdList);
+		model.addAttribute("tchList", tchList);
+		return "emp/com/svlf/svlfForm";
+	}
+
+	@PostMapping("/svlfInsert")
+	public String svlfInsert(SvlfVO svlfVO) {
+		log.info("svlfInsert()...실행");
+		String goPage = "";
+
+		//log.info("svlfVO", svlfVO);
+
+		int result = svlfService.svlfInsert(svlfVO);
+
+		if(result == 1) {
+			String className = svlfVO.getSvlfClass();
+			svlfService.cmCdUpdate(className);
+
+			goPage = "redirect:/svlf/svlfList";
+		}else {
+			goPage = "redirect:/svlf/svlfForm";
+		}
+		return goPage;
+	}
+
+	@GetMapping("/svlfDetail")
+	public String svlfDetail(String svlfNo, Model model) {
+		log.info("svlfDetail()...실행");
+		String goPage = "";
+
+		SvlfVO svlfVO = svlfService.svlfInfo(svlfNo);
+
+		if(svlfVO != null) {
+			model.addAttribute("svlfVO", svlfVO);
+			goPage = "emp/com/svlf/svlfDetail";
+		}else {
+			goPage = "redirect:/svlf/svlfForm";
+		}
+
+		return goPage;
+	}
+
+	@GetMapping("/svlfUPdateForm")
+	public String svlfUPdateForm(String svlNo,Model model) {
+		log.info("svlfUPdateForm()...실행");
+		String goPage = "";
+
+		SvlfVO svlfVO = svlfService.svlfInfo(svlNo);
+
+		if(svlfVO != null) {
+			List<CmCdVO> cmCdList = new ArrayList<CmCdVO>();
+			List<EmpVO> tchList = new ArrayList<EmpVO>();
+
+			cmCdList = svlfService.cmCdList();
+			tchList = svlfService.checkDepartCd();
+
+			model.addAttribute("cmCdList", cmCdList);
+			model.addAttribute("tchList", tchList);
+			model.addAttribute("svlfVO", svlfVO);
+			model.addAttribute("status", "u");
+			goPage = "emp/com/svlf/svlfForm";
+		}else {
+			goPage = "redirect:/svlf/svlfDetail?svlfNo="+svlNo;
+		}
+
+		return goPage;
+	}
+
+	@GetMapping("/svlfDel")
+	public String svlfDel(String svlNo) {
+		log.info("svlfDel()...실행");
+		String goPage = "";
+
+		SvlfVO svlfVO = svlfService.svlfInfo(svlNo);
+
+		int result = svlfService.svlfDel(svlNo);
+
+		if(result == 1) {
+			String className = svlfVO.getSvlfClass();
+			svlfService.cmCdUpdate2(className);
+
+			goPage = "redirect:/svlf/svlfList";
+		}else {
+			goPage = "redirect:/svlf/svlfDetail?svlfNo="+svlNo;
+		}
+
+		return goPage;
+	}
+
+}

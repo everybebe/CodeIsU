@@ -1,0 +1,13 @@
+package team.tttt.pms.stu.main.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.emp.vo.AttdVO;
+
+@Mapper
+public interface DongMapper {
+
+	public AttdVO userCheck(AttdVO dataVO);
+	public int insertAttd(AttdVO dataVO);
+	public int inClass(AttdVO attdVO);
+}

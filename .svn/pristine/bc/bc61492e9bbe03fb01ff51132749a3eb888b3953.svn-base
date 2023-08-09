@@ -1,0 +1,59 @@
+package team.tttt.pms.project.alarm;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.vo.CustomUser;
+
+@Slf4j
+public class AlarmHandler extends TextWebSocketHandler {
+	private static List<WebSocketSession> list = new ArrayList<WebSocketSession>();
+
+	@Override
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		log.info("## 누군가 접속", session);
+		list.add(session);
+
+	}
+
+	@Override
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+
+		String minjung = message.getPayload();   //getPayload : TextMessage 객체의 페이로드를 문자열 형태로 가져올 수 있음
+		log.debug("ck:" + minjung + "ck:");
+		if(minjung.equals("issue")) {
+			log.debug("이슈 등록");
+			for (WebSocketSession webSocketSession : list) {
+				webSocketSession.sendMessage(new TextMessage("새로운 issue가 등록되었어용"+"<br>"));
+
+			}
+		}else if(minjung.equals("aply")) {
+			log.debug("지원 신청서 ");
+			for (WebSocketSession webSocketSession : list) {
+				webSocketSession.sendMessage(new TextMessage("새로운 지원자가 등록 되었습니다."+"<br>"));
+			}
+		}else {
+			log.debug("알림 없을 때");
+			for (WebSocketSession webSocketSession : list) {
+				webSocketSession.sendMessage(new TextMessage("새로운 알림이 없습니다."+"<br>"));
+			}
+		}
+
+	}
+
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		log.info("## 누군가 떠남", session);
+		list.remove(session);
+	}
+}

@@ -1,0 +1,50 @@
+package team.tttt.pms.stu.academiSupport.web;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.utils.cmdcd.service.CmCdService;
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.stu.academiSupport.service.CfroomRsvtService;
+import team.tttt.pms.stu.vo.CfroomRsvtVO;
+
+@Slf4j
+@Controller
+@RequestMapping("/stu/academiSupport")
+public class CfroomRsvtController {
+
+	@Inject
+    private CfroomRsvtService cfroomRsvtService;
+
+	@Inject
+	private CmCdService service;
+
+	@GetMapping("/cfroomRsvt")
+	public String cfroomRsvt(Model model) {
+		List<CmCdVO> cfroomHr = service.selectCode("S002");
+		List<CmCdVO> cfroomCd = service.selectCode("S001");
+		String cfrommCd = "S001";
+		String rsvtHr = "S002";
+		List<CfroomRsvtVO> cfroomRestList = cfroomRsvtService.selectCfroomRsvtList(cfrommCd, rsvtHr);
+		model.addAttribute("cfroomHr", cfrommCd);
+		model.addAttribute("cfroomCd", cfroomCd);
+		model.addAttribute("cfroomRestList", cfroomRestList);
+		return "stu/com/academiSupport/cfroomRsvt";
+	}
+
+	@PostMapping("/cfroomRsvt")
+	public String cfroomRsvtInsert(@RequestBody CfroomRsvtVO cfroomRsvtVO) {
+		ServiceResult result = cfroomRsvtService.insertCfroomRsvt(cfroomRsvtVO);
+		return "redirect:/stu/academiSupport/cfroomRsvt";
+	}
+}

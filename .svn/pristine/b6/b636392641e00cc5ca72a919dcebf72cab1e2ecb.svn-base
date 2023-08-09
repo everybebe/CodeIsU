@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.Issue.mapper.PmsIssueMapper">
+
+	<sql id="boardSearch">
+		<if test="searchType != null and searchType == 'title'">
+			and (ISSUE_TTL like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'writer'">
+			and (USER_NM like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'titleWriter'" >
+			and (USER_NM like '%'||#{searchWord}||'%') or
+			(ISSUE_TTL like '%'||#{searchWord}||'%')
+		</if>
+	</sql>
+
+
+
+	<select id="getIssueList" parameterType="PaginationInfoVO" resultType="IssueVO">
+	/* team.tttt.pms.project.Issue.mapper.PmsIssueMapper.getIssueList */
+
+
+		select
+		    PROJ_NO  , STU_NO , STU_NO , ISSUE_REG_DT , ISSUE_CD , ISSUE_TTL , ISSUE_CN , ISSUE_STTS_CD
+		    , ISSUE_NO , user_nm  , rnum, issue_asg
+
+		from(
+			select a.* , row_number() over (order by a.ISSUE_REG_DT asc) rnum
+			from(
+			    select
+				    a.PROJ_NO , a.STU_NO , TO_CHAR(a.ISSUE_REG_DT, 'yyyy-mm-dd') as ISSUE_REG_DT
+				    , d.CD_NM as ISSUE_CD
+				    , a.ISSUE_TTL
+				    , a.ISSUE_CN
+				    , c.CD_NM as ISSUE_STTS_CD
+				    , a.ISSUE_NO
+			        , s.user_NM as user_nm
+                    , s2.user_NM as issue_asg
+			    from
+			    	tb_issue a
+			        join tb_stu s on a.STU_NO  = s.STU_NO
+                    join tb_stu s2 on s2.STU_NO = a.issue_asg
+
+				    join tb_cm_cd c on c.CD_TYPE_ID = SUBSTR(a.ISSUE_STTS_CD, 1, INSTR(a.ISSUE_STTS_CD, '-') -1)
+				    and c.CD_VL = SUBSTR(a.ISSUE_STTS_CD, INSTR(a.ISSUE_STTS_CD, '-') + 1)
+				    and c.CD_TYPE_ID = 'P006'
+				    and c.CD_C_USE_YN = 'Y'
+
+				    join tb_cm_cd d on d.CD_TYPE_ID = SUBSTR(a.ISSUE_CD, 1, INSTR(a.ISSUE_CD, '-') -1)
+				    and d.CD_VL = SUBSTR(a.ISSUE_CD, INSTR(a.ISSUE_CD, '-') + 1)
+				    and d.CD_TYPE_ID = 'P007'
+				    and d.CD_C_USE_YN = 'Y'
+				where
+					proj_no = #{projNo}
+					<include refid="boardSearch"/>
+			 order by ISSUE_REG_DT asc
+				) a
+			) b
+		<![CDATA[
+			where b.rnum >= #{startRow} and b.rnum <= #{endRow}
+		]]>
+	</select>
+
+
+	<select id="selectBoardCount" parameterType="PaginationInfoVO" resultType="int">
+		select
+			count(a.stu_no)
+            ,count(a.issue_no)
+		from
+			tb_issue a
+            join tb_stu b on a.stu_no = b.stu_no
+		where
+			proj_no = #{projNo}
+		<include refid="boardSearch"/>
+	</select>
+
+	<insert id="insertIssue" parameterType="IssueVO">
+		INSERT INTO TB_ISSUE(
+		ISSUE_NO
+		,ISSUE_CN
+		,ISSUE_STTS_CD
+		,ISSUE_TTL
+		,ISSUE_CD
+		,ISSUE_REG_DT
+		,STU_NO
+		,PROJ_NO
+		)
+		VALUES(
+		seq_issue.nextval
+		, #{issueCn}
+		, #{issueSttsCd}
+		, #{issueTtl}
+		, #{issueCd}
+		, sysdate
+		, #{stuNo}
+		, #{projNo})
+	</insert>
+
+
+	<select id="Detail" resultType="IssueVO">
+		SELECT
+		    A.PROJ_NO
+		    , A.STU_NO
+		    ,  A.ISSUE_REG_DT
+		    ,  D.CD_NM AS ISSUE_CD
+		    ,  A.ISSUE_TTL
+		    ,  A.ISSUE_CN
+		    ,  C.CD_NM AS ISSUE_STTS_CD
+		    ,  A.ISSUE_NO
+		    ,  S.USER_NM
+		FROM
+	    	TB_ISSUE A
+	        JOIN TB_STU S ON A.STU_NO  = S.STU_NO
+		    JOIN TB_CM_CD C ON C.CD_TYPE_ID = SUBSTR(A.ISSUE_STTS_CD, 1, INSTR(A.ISSUE_STTS_CD, '-') -1)
+		    AND C.CD_VL = SUBSTR(A.ISSUE_STTS_CD, INSTR(A.ISSUE_STTS_CD, '-') + 1)
+		    AND C.CD_TYPE_ID = 'P006'
+		    AND C.CD_C_USE_YN = 'Y'
+
+		    JOIN TB_CM_CD D ON D.CD_TYPE_ID = SUBSTR(A.ISSUE_CD, 1, INSTR(A.ISSUE_CD, '-') -1)
+		    AND D.CD_VL = SUBSTR(A.ISSUE_CD, INSTR(A.ISSUE_CD, '-') + 1)
+		    AND D.CD_TYPE_ID = 'P007'
+		    AND D.CD_C_USE_YN = 'Y'
+			WHERE
+				A.ISSUE_NO = #{issueNo}
+	</select>
+
+	<update id="update" parameterType="IssueVO">
+        UPDATE TB_ISSUE
+        SET
+        ISSUE_TTL = #{issueNo}
+        , ISSUE_CD = #{issueCd}
+        , ISSUE_STTS_CD = #{issueSttsCd}
+        , STU_NO = #{stuNo}
+        , ISSUE_CN = #{issueCn}
+        WHERE
+        	ISSUE_NO = #{issueNo}
+	</update>
+</mapper>
+
+
+
+
+

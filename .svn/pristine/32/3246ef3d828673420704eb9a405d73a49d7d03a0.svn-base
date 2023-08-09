@@ -1,0 +1,5 @@
+package team.tttt.pms.emp.attd.service;
+
+public interface AttdService {
+
+}

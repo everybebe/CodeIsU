@@ -1,0 +1,21 @@
+package team.tttt.pms.stu.hakup.service.impl;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.stu.hakup.mapper.AttdanMapper;
+import team.tttt.pms.stu.hakup.mapper.CfroomRsvtMapper;
+import team.tttt.pms.stu.hakup.service.AttdanService;
+import team.tttt.pms.stu.vo.StuVO;
+
+@Service
+public class AttdanServiceImpl implements AttdanService{
+	@Inject
+	private AttdanMapper attdanMapper;
+
+	@Override
+	public StuVO selectStu(String userNo) {
+		return attdanMapper.selectStu(userNo);
+	}
+}

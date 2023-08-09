@@ -1,0 +1,470 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<style>
+
+
+.lineClear {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#insertBtn {
+	float:right;
+	height:30px;
+	background:#56726A;
+	margin-bottom: -10px;
+}
+.btnStyle, #aplyBtn {
+    background-color: #56726a;
+    color: white;
+}
+.mcanBtn , #cancleBtn2{
+	border: 1px solid #56726a;
+}
+.progress-bar{
+	background-color: #D71923;
+}
+#mAplyCn, #mTechChoice, .inputColor{
+	background-color:#f4f2f2;
+}
+#techChoice, #mTechChoice{
+	text-align:left;
+	border:1px solid #E6E3E2;
+	height:40px;
+}
+</style>
+
+<!-- 검색창 -->
+
+<h3>비정규 프로젝트 리스트</h3>
+<!-- 프로젝트 생성 버튼 -->
+<div class="d-flex justify-content-end" id="insertBtnClass">
+<button type="button" class="btn btn-success btn-sm me-3" id="insertBtn">프로젝트 등록</button>
+</div>
+<div class="table-responsive ms-1"><br>
+
+<!-- 프로젝트 리스트 -->
+<table class="table align-items-center mb-0" id="projCreate">
+
+</table>
+</div>
+
+
+<!-- 프로젝트 생성  Modal 시작-->
+<div class="modal fade" id="insertProjModal" role="dialog" aria-labelledby="insertProjModalLabel" aria-hidden="true">
+  <div class="modal-dialog d-flex justify-content-center" role="document">
+    <div class="modal-content" id="modalContent">
+    </div>
+  </div>
+</div>
+<!-- 프로젝트 생성  Modal 끝 -->
+
+
+<script type="text/javascript">
+
+//서버에서 발행된 헤더네임과 토큰갑사 저장
+var header = '${_csrf.headerName}';
+var token =  '${_csrf.token}';
+
+let stuNo = 'S2302105';
+
+//날짜 수정
+function convertDate(Cdate) {
+  const year = Cdate.substring(0, 4);
+  const month = Cdate.substring(4, 6);
+  const day = Cdate.substring(6, 8);
+  const formattedDate = year + "-" + month + "-" + day;
+  return formattedDate;
+}
+//날짜 수정 하이픈 제거
+function converDate2(Cdate){
+	const formattedDate = Cdate.replaceAll("-", "");
+	return formattedDate;
+}
+
+
+/* 프로젝트 생성된 리스트 */
+function projList(){
+
+
+	$(function() {
+    $.ajax({
+      url: "/pms/projlist",
+      type: "get",
+	  contentType:"application/json;charset=utf-8",
+      success:function(res){
+    	  console.log("projcreate vo:",res);
+
+    	  let count = 0;
+    	  code = "";
+		  code += "<div class='d-flex justify-start-end'>";
+    	  for(let i=0; i<res.length; i++){
+			  let sys = new Date();
+
+			  let projBgngDt = convertDate(res[i].projBgngDt)
+    		  let projDdlnDt = convertDate(res[i].projDdlnDt)
+
+    		  let lestDay = Date.parse(projDdlnDt) - sys;
+
+			  if(lestDay < 0) {
+ 			      daysLeft = "프로젝트 종료";
+			  } else {
+			   	  daysLeft = Math.ceil(lestDay / (1000 * 60 * 60 * 24)) + " days left";
+			  }
+
+    	  code += `
+    		  <div class="card me-4 ms-3 mb-3 aplyClick" style="width: 20rem;" value="\${res[i].projNo}">
+    		  <div class="rounded-top w-100 h-1 mt-1" style="background:#56726A;"></div>
+    			<div class="card-body" style="box-sizing: border-box;">
+    				<h5 class="card-title h6 font-weight-bolder" style="height: 20px;">
+    					\${res[i].projNm}
+    				</h5>
+    				<h6 class="card-subtitle mb-1 mt-1 text-xs lineClear" style="height: 30px; font-weight:normal;">\${res[i].projExpln}</h6>
+    				<p></p>
+    				<span class="card-text text-xs">
+	    				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1 bi bi-people-fill" viewBox="0 0 16 16">
+	    				  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+	    				</svg>
+    					\${res[i].projTnope}명
+    				</span>&nbsp;
+    				<span class="text-xs fw-bold" id="projStatus" >\${res[i].projSttsCd}</span>
+    				<br>
+    				<p class="card-text text-xs mt-1">
+	    				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1 bi bi-calendar4-range" viewBox="0 0 16 16">
+	  				 	  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z"/>
+	  					  <path d="M9 7.5a.5.5 0 0 1 .5-.5H15v2H9.5a.5.5 0 0 1-.5-.5v-1zm-2 3v1a.5.5 0 0 1-.5.5H1v-2h5.5a.5.5 0 0 1 .5.5z"/>
+	  					</svg>
+	    				\${projBgngDt} - \${projDdlnDt}
+	    			</p>
+					<div style="border:1px solid #F4F2F2; "></div>
+    				<div class="progress-wrapper">
+    					<div class="progress-info">
+    						<div class="progress-percentage mt-3">
+    							<span class="text-xs fw-bold">진행도 \${res[i].projSttr}%
+    							<span class="w-45 text-end text-xs daysLeft" style="float:right;">
+	    							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-stopwatch-fill" viewBox="0 0 16 16">
+	    							  <path d="M6.5 0a.5.5 0 0 0 0 1H7v1.07A7.001 7.001 0 0 0 8 16a7 7 0 0 0 5.29-11.584.531.531 0 0 0 .013-.012l.354-.354.353.354a.5.5 0 1 0 .707-.707l-1.414-1.415a.5.5 0 1 0-.707.707l.354.354-.354.354a.717.717 0 0 0-.012.012A6.973 6.973 0 0 0 9 2.071V1h.5a.5.5 0 0 0 0-1h-3zm2 5.6V9a.5.5 0 0 1-.5.5H4.5a.5.5 0 0 1 0-1h3V5.6a.5.5 0 1 1 1 0z"/>
+	    							</svg>
+    							<span class="minMsg">\${daysLeft}</span>
+    							</span>
+    						</div>
+    					</div>
+    				</div>
+    				<div class="progress" style="width: 100%;">
+    					<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: \${res[i].projSttr}%"></div>
+    				</div>
+    			</div>
+    		</div>
+    	  `;
+    	  count++;
+
+    	  if(count % 3 === 0) {
+    		  code += "</div><div class='d-flex justify-start-end' style='border:none;'>";
+    	  }
+		}
+
+    	  code += "</div>";
+
+    	  $("#projCreate").html(code);
+
+    	  $(".minMsg").each(function(index,item){
+			 if(item.innerHTML=="프로젝트 종료"){
+				item.style.color="#D71923";
+			 }
+		  });
+
+      },
+		error: function(xhr) {
+		alert("상태: " + xhr.status);
+		},
+		dataType: 'json'
+	});
+
+});
+}
+
+projList();
+
+
+/* 프로젝트 지원신청서 모달 */
+$("#projCreate").on("click", ".aplyClick", function(){
+
+		var aplyProjNo = $(this).attr("value");
+		console.log("aplyProjNo: ",aplyProjNo)
+
+
+		const aplyModal = `
+		<div class="modal-header">
+        <h5 class="modal-title font-weight-normal" id="aplyModalLabel">프로젝트 지원</h5>
+        </div>
+
+      <div class="modal-body">
+         <form>
+          <h5 class="modal-title font-weight-normal mb-2" id="aplyModalLabel"></h5>
+
+	      <label class="form-label" for="mAplyCn">자기소개</label>
+          <textarea class="form-control mAplyCn mb-2 ps-2" id="mAplyCn"></textarea>
+		  <label class="form-label" for="mAplyTech">보유기술</label>
+	          <p class="form-control mb-2 text-center" id="mAplyTech">
+		          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="Java">
+		          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="Js">
+		          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="Python">
+		          <input type="button" class="btn w-20" style="border: 1px solid #56726a;" value="Oracle"><br>
+		          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="HTML">
+		          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="CSS">
+		          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="React">
+		          <input type="button" class="btn w-20" style="border: 1px solid #56726a;" value="PHP">
+			 	  <label class="form-control mb-2 ps-2" id="mTechChoice">
+			 	  </label>
+	          </p>
+
+	      <div class="modal-footer">
+	        <button type="button" class="btn bg msubBtn" id="aplyBtn">지원하기</button>
+	        <button type="reset" class="btn bg mcanBtn" data-bs-dismiss="modal" id="cancleBtn2">취소</button>
+	      </div>
+        </form>
+      </div>
+		`
+
+		$("#modalContent").html(aplyModal);
+		aplyTech()
+		$("#insertProjModal").modal("show");
+})
+
+/* 지원신청서 기술 */
+const aplyTech = () =>{
+	$("#mAplyTech").on("click", "input[type='button']", function(){
+		var tech = $(this).val();
+		console.log("선택된 기술 스택 : ", tech);
+		var techChoice = $("#mTechChoice").val(tech);
+
+
+		// 이미 선택된 기술 스택인 경우 선택 해제
+		if ($(this).hasClass("selected")) {  //hasClass 존재여부 확인
+			  $(this).removeClass("selected");
+			  techChoice.find("label[data-value='" + tech + "']").remove();
+		}
+		// 선택되지 않은 기술 스택인 경우 선택
+		else {
+			 $(this).addClass("selected");
+
+			// 선택된 기술 스택 추가
+			techChoice.append("<label data-value='" + tech + "'>" + " " + tech  + "</label>");
+		}
+})
+}
+
+/* 지원 신청 데이터  */
+document.addEventListener("click", function (event) {
+
+  if (event.target.id === "aplyBtn") {
+
+	var data = {
+    		aplyCn : $("#mAplyCn").val(),
+    		aplyTech : getSelectedAplyTech()
+
+    	};
+
+    	//서버로 보내기
+    	insertAply(data);
+    	$("#aplyModal").modal("hide");
+  }
+});
+
+
+
+/* $("#cancleBtn2").on("click", function(){
+      	$("#mTechChoice").empty();
+})
+ */
+
+/* 지원신청서에서 기술스택 클릭시 */
+function getSelectedAplyTech(){
+
+	console.log('getSelectedAplyTech' + '실행')
+
+	var selectedTech = "";
+	$("#mAplyTech input[type='button'].selected").each(function() {
+		var tech = $(this).val();
+		//db에 저장되는 값
+		selectedTech += " " + tech;
+	});
+
+	console.log("selectedTech: ",selectedTech);
+	return selectedTech;
+}
+
+/* 프로젝트 지원 신청 */
+function insertAply(data) {
+
+	$.ajax({
+		url : "/pms/insertaply",
+		type : "post",
+		data : JSON.stringify(data),
+		dataType : "text",
+		contentType : "application/json; charset=utf-8",
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(header, token);
+		},
+		success : function(res) {
+
+			alert("프로젝트 지원 성공!!")
+
+		},
+		error : function(xhr){
+			alert(xhr.status);
+		}
+	})
+}
+
+
+
+
+/* 프로젝트 등록 버튼  */
+$("#insertBtn").on("click", function(){
+
+	const projectModal = `
+	      <div class="modal-header">
+        <h5 class="modal-title font-weight-normal" id="insertProjModalLabel">프로젝트 생성</h5>
+        </div>
+
+      <div class="modal-body">
+         <form>
+	      <label class="form-label" for="mProjNm">프로젝트명</label>
+          <input type="text" class="form-control mb-2 ps-2 inputColor" id="mProjNm" name="projNm" style="border:1px solid #E6E3E2">
+		  <label class="form-label" for="mProjExpln">프로젝트 소개</label>
+          <textarea class="form-control mb-2 ps-2 inputColor" id="mProjExpln" name="projExpln" style="border:1px solid #E6E3E2"></textarea>
+		  <label class="form-label" for="mProjBgngDt">프로젝트 시작일</label>
+          <input type="date" class="form-control mb-2 ps-2 inputColor" id="mProjBgngDt" name="projBgngDt" style="border:1px solid #E6E3E2">
+		  <label class="form-label" for="mProjDdlnDt">프로젝트 마감일</label>
+          <input type="date" class="form-control mb-2 ps-2 inputColor" id="mProjDdlnDt" name="projDdlnDt" style="border:1px solid #E6E3E2">
+		  <label class="form-label" for="mProjTech">필요 기술 스택</label>
+          <p class="form-control mb-2 text-center" id="mProjTech">
+	          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="Java">
+	          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="Js">
+	          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="Python">
+	          <input type="button" class="btn w-20" style="border: 1px solid #56726a;" value="Oracle"><br>
+	          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="HTML">
+	          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="CSS">
+	          <input type="button" class="btn w-20 me-2" style="border: 1px solid #56726a;" value="React">
+	          <input type="button" class="btn w-20" style="border: 1px solid #56726a;" value="PHP">
+		 	  <label class="form-control mb-2 ps-2 inputColor" id="techChoice">
+		 	  </label>
+          </p>
+	      <div class="modal-footer">
+	        <button type="button" class="btn bg msubBtn btnStyle" id="AddBtn">생성</button>
+	        <button type="reset" class="btn bg mcanBtn" data-bs-dismiss="modal" id="cancleBtn">취소</button>
+	      </div>
+        </form>
+      </div>
+	`
+	$("#modalContent").html(projectModal);
+
+	techChoiceBtn()
+
+	$("#insertProjModal").modal("show");
+
+})
+
+
+/* 지원신청서 모달 작성  */
+const techChoiceBtn =() =>{
+
+	$("#mProjTech input[type='button']").on("click", function(){
+		var tech = $(this).val();
+		console.log("선택된 기술 스택 : ", tech);
+		var techChoice = $("#techChoice").val(tech);
+
+
+	 // 이미 선택된 기술 스택인 경우 선택 해제
+	    if ($(this).hasClass("selected")) {  //hasClass 존재여부 확인
+	      $(this).removeClass("selected");
+	      techChoice.find("label[data-value='" + tech + "']").remove();
+	    }
+	    // 선택되지 않은 기술 스택인 경우 선택
+	    else {
+	        $(this).addClass("selected");
+
+	        // 선택된 기술 스택 추가
+	        techChoice.append("<label data-value='" + tech + "'>" + " " + tech  + "</label>");
+	      }
+	})
+}
+		document.addEventListener("click", function (event) {
+  		if (event.target.id === "AddBtn") {
+			var data = {
+				projNm : $("#mProjNm").val(),
+				projExpln : $("#mProjExpln").val(),
+				projBgngDt : converDate2($("#mProjBgngDt").val()),
+				projDdlnDt : converDate2($("#mProjDdlnDt").val()),
+				projTech : getSelectedTech(),
+				stuNo : stuNo
+
+		};
+
+		//서버로 보내기
+			insertProj(data);
+			$("#insertProjModal").modal("hide");
+
+ 	    }
+	});
+
+/* 	$("#cancleBtn").on("click", function(){
+      	$("#techChoice").empty();
+    })
+ */
+
+
+ /* 기술스택 선택시 */
+function getSelectedTech(){
+
+	var selectedTech = "";
+	$("#mProjTech input[type='button'].selected").each(function() {
+
+		var tech = $(this).val();
+
+		//db에 저장되는 값
+		selectedTech += " " + tech;
+	});
+
+	console.log("selectedTech: ",selectedTech);
+	return selectedTech;
+}
+
+
+
+/* 프로젝트 생성 */
+function insertProj(data) {
+
+$.ajax({
+url : "/pms/insertproj",
+type : "post",
+data : JSON.stringify(data),
+dataType : "text",
+contentType : "application/json; charset=utf-8",
+beforeSend: function(xhr) {
+	xhr.setRequestHeader(header, token);
+},
+success : function(res) {
+
+	alert("성공!!")
+	projList();
+},
+
+error : function(xhr){
+	alert(xhr.status);
+},
+
+});
+};
+
+
+
+
+
+</script>

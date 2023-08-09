@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.storage.mapper.PmsStorageMapper">
+
+
+	<sql id="boardSearch">
+		<if test="searchType != null and searchType == 'title'">
+			and (botitle like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'writer'">
+			and (bowriter like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'titleWriter'" >
+			and (bowriter like '%'||#{searchWord}||'%') or
+			(botitle like '%'||#{searchWord}||'%')
+		</if>
+	</sql>
+
+
+	<select id="storageList">
+		select
+		    STR_NO
+		    , STR_TITLE
+		    , STR_CN
+		    , STU_no
+		    , STR_REG_DT
+		    , ATCH_FILE_NO
+		    , PROJ_NO
+		from
+		    tb_storage
+		where
+		    proj_no = 'a005'
+	</select>
+
+
+	<select id="selectBoardCount" parameterType="PaginationInfoVO" resultType="int">
+		select
+			count(STR_NO)
+		from
+			tb_storage
+		where
+			proj_no = #{projNo}
+		<include refid="boardSearch"/>
+	</select>
+
+
+	<select id="getDetailStorage">
+		select
+		    STR_NO
+		    , STR_TITLE
+		    , STR_CN
+		    , STU_no
+		    , STR_REG_DT
+		    , ATCH_FILE_NO
+		    , PROJ_NO
+		from
+		    tb_storage
+		where
+		    proj_no = 'a005' and
+		    STR_NO = 'st7'
+	</select>
+
+	<insert id="insertStorage">
+		insert into tb_storage(
+		    STR_NO
+		    , STR_TITLE
+		    , STR_CN
+		    , STU_no
+		    , STR_reg_DT
+		    , ATCH_FILE_NO
+		    , PROJ_NO
+		) values(
+		    'st' || seq_storage.nextval
+		    , 'text'
+		    , 'text'
+		    , 'S2302105'
+		    , sysdate
+		    , 'fileNo'|| seq_fileNo.nextval
+		    , 'a005'
+		)
+	</insert>
+
+	<update id="StorageUpdate">
+		update
+		    tb_storage
+		set
+		    STR_TITLE = '수정'
+		    , STR_CN = '수정'
+		    , STR_REG_DT = sysdate
+		where
+		    STR_NO = 'st11' and
+		    stu_no = 'S2302105'
+	</update>
+
+	<delete id="StorageDelete">
+		delete
+		from tb_storage
+		where
+		    STR_NO = 'st6' and
+		    stu_no = 'S2302105'
+	</delete>
+
+</mapper>

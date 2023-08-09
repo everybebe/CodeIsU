@@ -1,0 +1,10 @@
+package team.tttt.pms.common.utils.cmdcd.web;
+
+import java.io.File;
+
+public class testt {
+
+	public static void main(String[] args) {
+		System.out.println(new File("").getAbsolutePath());
+	}
+}

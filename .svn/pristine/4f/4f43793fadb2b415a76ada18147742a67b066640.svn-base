@@ -1,0 +1,15 @@
+package team.tttt.pms.project.alarm;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/alarm")
+public class AlarmController {
+
+	@GetMapping("/test")
+	public String getAlarm() {
+		return "pms/com/alarm";
+	}
+}

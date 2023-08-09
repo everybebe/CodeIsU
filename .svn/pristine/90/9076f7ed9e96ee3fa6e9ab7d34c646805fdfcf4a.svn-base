@@ -1,0 +1,24 @@
+package team.tttt.pms.common.vo;
+
+import java.util.Date;
+import java.util.List;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter
+@Getter
+@ToString
+public class StorageVO {
+
+	private String strNo;
+	private String strTitle;
+	private String strCn;
+	private String stuNo;
+	private Date   strRegDt;
+	private int    atchFileNo;
+	private String projNo;
+	private List<AtchFileVO> atchFileVO;
+}

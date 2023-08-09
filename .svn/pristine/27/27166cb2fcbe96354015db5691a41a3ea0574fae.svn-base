@@ -1,0 +1,9 @@
+package team.tttt.pms.stu.mypage.service;
+
+import team.tttt.pms.common.enums.ServiceResult;
+
+public interface ModifyProfileService {
+
+	ServiceResult verifyPs(String userNo, String userPs);
+
+}

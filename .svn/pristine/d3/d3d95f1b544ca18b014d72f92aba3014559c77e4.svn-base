@@ -1,0 +1,10 @@
+package team.tttt.pms.tch.damdang.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.tch.damdang.service.TchProjService;
+
+@Service
+public class TchProjServiceImpl implements TchProjService{
+
+}

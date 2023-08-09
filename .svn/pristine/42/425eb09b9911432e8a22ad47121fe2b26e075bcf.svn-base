@@ -1,0 +1,15 @@
+package team.tttt.pms.stu.vo;
+
+import lombok.Data;
+
+@Data
+public class ResCareerInfoVO {
+	private String careerNo;
+	private String resumeNo;
+	private String coNm;
+	private String jncmpYm;
+	private String rsgntnYm;
+	private String deptNm;
+	private String jbgdNm;
+	private String hdofYn;
+}

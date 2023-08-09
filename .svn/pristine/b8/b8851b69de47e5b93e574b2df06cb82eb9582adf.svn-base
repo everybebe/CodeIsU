@@ -1,0 +1,12 @@
+package team.tttt.pms.stu.vo;
+
+import lombok.Data;
+
+@Data
+public class ResCrtfctInfoVO {
+	private String crtfctNo;
+	private String resumeNo;
+	private String crtfctNm;
+	private String issuInstNm;
+	private String crtfctDt;
+}

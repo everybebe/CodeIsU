@@ -1,0 +1,18 @@
+package team.tttt.pms.project.createProj.service;
+
+import java.util.List;
+
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.project.vo.ProjVO;
+
+
+public interface createProjService {
+
+	public List<ProjVO> projList();
+
+	public ServiceResult insertProj(ProjVO projVO);
+
+
+
+
+}

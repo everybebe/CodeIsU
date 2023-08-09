@@ -1,0 +1,8 @@
+package team.tttt.pms.emp.attd.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AttdMapper {
+
+}

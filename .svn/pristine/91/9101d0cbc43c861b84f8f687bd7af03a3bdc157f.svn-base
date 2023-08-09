@@ -1,0 +1,97 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<style>
+
+.progress {
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar {
+  flex: 1;
+}
+
+#progressPer {
+  margin-left: 10px;
+}
+</style>
+<div class="container">
+  <div class="row">
+    <div class="col" id=""><span>Column1</span></div>
+    <div class="col" id=""><span>Column2</span></div>
+    <div class="col" id=""><span>Column3</span></div>
+    <div class="w-100"></div>
+    <div class="col" id=""><span>Column4</span></div>
+    <div class="col" id=""><span>Column5</span></div>
+    <div class="col" id=""><span>Column6</span></div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col" id=""><span>Column1</span></div>
+    <div class="col" id=""><span>Column2</span></div>
+    <div class="col" id=""><span>Column3</span></div>
+    <div class="w-100"></div>
+    <div class="col" id=""><span>Column4</span></div>
+    <div class="col" id=""><span>Column5</span></div>
+    <div class="col" id=""><span>Column6</span></div>
+  </div>
+
+  <label class="form-label mb-0" for="taskDetailSttrDiv">진척도</label>
+    <div class="progress controllProgress">
+        <input class="progress-bar bg-info controllInput" type="range" min="1" max="100" id="progress">
+        <div id="progressPer"></div>
+    </div>
+  </div>
+
+
+
+    <script>
+        document.querySelector('#progress').addEventListener('input',e=>{
+            document.querySelector('#progressPer').innerHTML= e.target.value+'%';
+        });
+
+
+
+
+
+		  	`<div class="progress mb-3 ms-4 mt-3" style="width:85%;">
+	  		 <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="60"
+	  		 aria-valuemin="0" aria-valuemax="100" style="width: ${res.projSttr}%;"></div></div>
+		<div class="position-absolute persent">res.projSttr%</div>`
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

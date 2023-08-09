@@ -1,0 +1,12 @@
+package team.tttt.pms.stu.hakup.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.stu.vo.StuVO;
+
+@Mapper
+public interface AttdanMapper {
+
+	public StuVO selectStu(String userNo);
+
+}

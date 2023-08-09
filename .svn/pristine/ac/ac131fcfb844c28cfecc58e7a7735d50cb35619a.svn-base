@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.mypage.mapper.QrCheckMapper">
+	<insert id="insertToken" parameterType="string" >
+		INSERT INTO TB_QR_TOKEN (
+			TOKEN_NO
+			,TOKEN_REG_DATE
+			,TOKEN_CODE
+			) VALUES (
+			QR_TOKEN_SEQ.NEXTVAL
+			, SYSDATE
+			, #{uuidToken}
+			)
+
+	</insert>
+
+</mapper>

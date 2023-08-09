@@ -1,0 +1,9 @@
+package team.tttt.pms.stu.main.service;
+
+import team.tttt.pms.emp.vo.AttdVO;
+
+public interface DongService {
+
+	public AttdVO userCheck(AttdVO dataVO);
+	public int insertAttd(AttdVO dataVO);
+}

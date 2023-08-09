@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.svlf.mapper.SvlfMapper">
+
+	<!-- 부서코드 확인 -->
+	<select id="checkDepartCd" resultType="empVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.checkDepartCd -->
+	SELECT
+		A.EMP_NO
+		, A.USER_NM
+	FROM TB_EMP A
+	LEFT OUTER JOIN TB_SVLF B
+	ON A.EMP_NO = B.EMP_NO
+	WHERE B.EMP_NO IS NULL
+	AND A.DEPART_CD = 'A00'
+	</select>
+
+	<!-- 연수과정 목록 -->
+	<select id="svlfList" resultType="svlfVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.svlfList -->
+	SELECT C.*
+		   , D.USER_NM
+	FROM TB_SVLF C
+	LEFT OUTER JOIN (SELECT A.EMP_NO
+							, A.USER_NM
+					 FROM TB_EMP A
+					 LEFT OUTER JOIN TB_SVLF B
+					 ON A.EMP_NO = B.EMP_NO
+					 WHERE A.EMP_NO = B.EMP_NO) D
+	ON C.EMP_NO = D.EMP_NO
+	WHERE C.EMP_NO = D.EMP_NO
+	</select>
+
+	<!-- 강의실그룹 코드 중 사용여부가 'N'인 코드 목록 -->
+	<select id="cmCdList" resultType="cmcdVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.cmCdList -->
+	SELECT A.CD_NM
+		   , A.CD_VL
+	FROM TB_CM A
+	LETT OUTER JOIN (SELECT C.CD_TYPE_ID
+					 FROM TB_CM_TYPE C
+					 WHERE CD_TYPE_ID = 'C001') B
+	ON A.CD_TYPE_ID = B.CD_TYPE_ID
+	WHERE A.CD_TYPE_ID = B.CD_TYPE_ID
+	AND A.CD_C_USE_YN = 'N'
+	ORDER BY A.CD_NM ASC
+	</select>
+
+	<!-- 공통 코드 이름이 강의실과 같은 경우 사용여부를 Y로 업데이트 -->
+	<update id="cmCdUpdate" parameterType="String">
+	<!-- team.tttt.pms.mapper.SvlfMapper.cmCdUpdate -->
+	UPDATE TB_CM_CD
+ 	SET
+    	CD_C_USE_YN = 'Y'
+	WHERE CD_NM = #{className}
+	</update>
+
+	<!-- 연수과정 등록 -->
+	<insert id="svlfInsert" parameterType="svlfVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.svlfInsert -->
+	INSERT INTO TB_SVLF(
+		SVLF_NO
+		, SVLF_BGNG_DT
+		, SVLF_DDLB_DT
+		, SVLF_NM
+		, SVLF_CLASS
+		, SVLF_CN
+		, EMP_NO
+	)VALUES(
+		#{svlfNo}
+		, #{svlfBgngDt}
+		, #{svlfDdlbDt}
+		, #{svlfNm}
+		, #{svlfClass}
+		, #{svlfCn}
+		, #{empNo}
+	)
+	</insert>
+
+	<!-- 선택한 연수과정 정보 가져오기 -->
+	<select id="svlfInfo" parameterType="String" resultType="svlfVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.svlfInfo -->
+ 	SELECT A.SVLF_NO
+		   , A.SVLF_BGNG_DT
+		   , A.SVLF_DDLB_DT
+		   , A.SVLF_NM
+		   , A.SVLF_CLASS
+		   , A.SVLF_CN
+		   , A.SVLF_DT
+		   , A.EMP_NO
+ 		   , B.USER_NM
+	FROM TB_SVLF A
+	LEFT OUTER JOIN(SELECT C.EMP_NO
+						   , C.USER_NM
+					FROM TB_EMP C) B
+	on a.emp_no = b.emp_no
+	where svlf_no = #{svlfNo}
+	</select>
+
+	<delete id="svlfDel" parameterType="String">
+		delete from tb_svlf
+ 		 where SVLF_NO = #{svlfNo}
+	</delete>
+
+	<update id="cmCdUpdate2" parameterType="String">
+		update tb_cm_cd
+  		   set
+       		   CD_C_USE_YN = 'N'
+ 		 where CD_NM = #{className}
+	</update>
+</mapper>

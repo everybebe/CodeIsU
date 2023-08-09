@@ -1,0 +1,22 @@
+package team.tttt.pms.stu.main.service;
+
+import java.util.List;
+
+import team.tttt.pms.project.vo.StorageVO;
+import team.tttt.pms.stu.vo.IssueListVO;
+import team.tttt.pms.stu.vo.ProjListVO;
+import team.tttt.pms.stu.vo.StorageListVO;
+
+
+public interface StuMainService {
+
+	public List<ProjListVO> projList(String stuNo);
+
+	public List<StorageListVO> storageList(String stuNo);
+
+	public List<IssueListVO> issueList(String stuNo);
+
+
+
+
+}

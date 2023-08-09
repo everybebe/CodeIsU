@@ -1,0 +1,28 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<div class="container">
+  <div class="row">
+    <div class="col" id=""><span>Column1</span></div>
+    <div class="col" id=""><span>Column2</span></div>
+    <div class="col" id=""><span>Column3</span></div>
+    <div class="w-100"></div>
+    <div class="col" id=""><span>Column4</span></div>
+    <div class="col" id=""><span>Column5</span></div>
+    <div class="col" id=""><span>Column6</span></div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col" id=""><span>Column1</span></div>
+    <div class="col" id=""><span>Column2</span></div>
+    <div class="col" id=""><span>Column3</span></div>
+    <div class="w-100"></div>
+    <div class="col" id=""><span>Column4</span></div>
+    <div class="col" id=""><span>Column5</span></div>
+    <div class="col" id=""><span>Column6</span></div>
+  </div>
+  
+  
+  
+</div>

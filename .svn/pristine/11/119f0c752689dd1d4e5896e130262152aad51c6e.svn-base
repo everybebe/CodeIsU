@@ -1,0 +1,129 @@
+<div class="modal fade show" id="taskModal" role="dialog" aria-labelledby="taskModal" aria-modal="true" style="display: block;">
+	<div class="modal-dialog d-flex justify-content-center" role="document">
+		<div class="modal-content" id="taskModalBody">
+			<div class="modal-header">
+				<h5 class="modal-title font-weight-normal" id="taskDetailModalLabel">일감 상세보기</h5>
+			</div>
+			<div class="modal-body">
+				<form>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="" for="taskDetailTitle">업무명</label>
+							</div>
+							<div class="col-9">
+								<p id="taskDetailTitle" name="taskTitle" class="form-control task mb-1"></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="" for="taskDetailBengDt">날짜</label>
+							</div>
+							<div class="col-4">
+								<p name="taskBengDt" id="taskDetailBengDt" class="form-control text-center task mb-1 me-2"></p>
+							</div>
+							<div class="col-1">
+								<span style="line-height: 40px;">-</span>
+							</div>
+							<div class="col-4">
+								<p id="taskDetailDdlnDt" name="taskDdlnDt" class="form-control text-center task mb-1 ms-0"></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="taskdetailpic">담당자</label>
+							</div>
+							<div class="col-9">
+								<p name="taskPic" id="taskDetailPic" class="form-control task mb-1"></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="" for="taskDetailPriority">우선순위</label>
+							</div>
+							<div class="col-9">
+								<p class="form-control task mb-1" id="taskDetailPriority" name="taskPriority" aria-label="Default select example">낮음</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="" for="taskDetailStts">상태</label>
+							</div>
+							<div class="col-9">
+								<p class="form-control task mb-1" id="taskDetailStts" name="taskStts">대기</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="" for="taskDetailtaskNo">업무번호</label>
+							</div>
+							<div class="col-9">
+								<p id="taskDetailtaskNo" name="taskNo" class="form-control task mb-1">T401</p>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="container" id="taskDetailSttrDiv">
+						<div class="row">
+							<div class="col-3 progress-info">
+								<label class="" for="taskDetailSttrDiv">진척도</label>
+							</div>
+							<div class="col-9 mt-3">
+								<div class="progress">
+									<div class="progress-bar bg-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
+								</div>
+								<div class=" text-sm font-weight-normal" id="taskDetailSttr"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="" for="">등록일</label>
+							</div>
+							<div class="col-9">
+								<p name="taskRegDt" id="taskDetailRegDt" class="form-control task mb-1">2023-07-31</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<div class="row">
+							<div class="col-3">
+								<label class="" for="">내용</label>
+							</div>
+							<div class="col-9">
+								<p id="taskDetailCn" name="taskCn" class="form-control task Cn">간트차트2</p>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="modal-footer">
+						<button type="button" id="updateTaskBtn" class="btn bg msubBtn">수정</button>
+						<button type="button" id="deleteTaskBtn" class="btn bg msubBtn">삭제</button>
+						<button type="button" class="btn bg mcanBtn" data-bs-dismiss="modal" style="border: 1px solid #56726a;">닫기</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,70 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table align-items-center mb-0">
+      <thead>
+        <tr>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+          >
+            제목
+          </th>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+          >
+            등록자
+          </th>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+          >
+            등록일
+          </th>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+          >
+            수정일
+          </th>
+        </tr>
+      </thead>
+      <tbody id="storageList"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const projNo = "a005";
+  let page;
+  let searchType;
+  let searchWord;
+
+  const storageList = (projNo, page, searchType, searchWord) => {
+    if (searchType == null) {
+      searchType = "title";
+    }
+    if (page == null) {
+    	page = 1;
+      }
+
+    $.ajax({
+      url: "/pms/project/storageList",
+      data: {
+        projNo: projNo,
+        currentPage: page,
+        searchType: searchType,
+        searchWord: searchWord,
+      },
+      type: "get",
+      dataType: "json",
+      success: function (res) {
+        console.log(res);
+      },
+      error: function (xhr) {
+        console.log("storageList 상태: " + xhr.status);
+      },
+    });
+  };
+
+  storageList(projNo, page, searchType, searchWord)
+</script>

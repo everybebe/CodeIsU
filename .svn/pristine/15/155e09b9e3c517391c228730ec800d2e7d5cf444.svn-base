@@ -1,0 +1,271 @@
+package team.tttt.pms.project.memManage.web;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.vo.CustomUser;
+import team.tttt.pms.project.memManage.service.MemManagementService;
+import team.tttt.pms.project.vo.MemJoinAplyVO;
+import team.tttt.pms.project.vo.MemManagementVO;
+import team.tttt.pms.project.vo.ProjVO;
+
+@Slf4j
+@Controller
+@RequestMapping("/pms")
+public class PmsMemManagementController {
+
+    @Inject
+    private MemManagementService memService;
+
+/*
+    @GetMapping(value="/memlist")
+    public String memberManagementList(Model model) {
+
+    	SecurityContext sc = SecurityContextHolder.getContext();
+
+    	CustomUser loginUser = (CustomUser)sc.getAuthentication().getPrincipal();
+    	log.debug("user: {}" ,loginUser);
+
+    	//loginUser에서 직책 불러오기
+        String jttlCD = memService.plCheck(loginUser.getUsername());
+
+        // 문자열 비교 주의!!!
+        if(jttlCD.equals("P001-1")) {
+		     return "/pms/com/memManagement";
+        }else{
+   	     	return "/emp/com/main";
+        }
+    }
+
+*/
+
+
+	@GetMapping(value="/memlist")
+	public String memberManagementList(Model model) {
+		return "pms/com/memManagement";
+	}
+
+    @ResponseBody
+    @PostMapping(value="/mem",produces = "application/json;charset=utf-8")
+    public List<MemManagementVO> memList(@RequestBody String projNo) {
+
+        List<MemManagementVO> memList = memService.memList(projNo);
+        return memList;
+    }
+
+    @ResponseBody
+    @PostMapping(value="/memupdate",produces = "application/json;charset=utf-8")
+    public String positionModify(@RequestParam Map<String, String> map) {
+
+        String goPage = "";
+
+        ServiceResult result = memService.positionModify(map);
+
+        if (result.equals(ServiceResult.OK)) {
+            goPage = "성공";
+        } else {
+            goPage = "실패";
+        }
+        return goPage;
+    }
+
+
+
+    @ResponseBody
+    @PostMapping(value="/memJoinAply",produces = "application/json;charset=utf-8")
+    public List<MemJoinAplyVO> memJoinAplyList(String projNo, Model model) {
+        List<MemJoinAplyVO> memJoinList = memService.memJoinAplyList(projNo);
+//        model.addAttribute("memJoinList", memJoinList);
+        return memJoinList;
+    }
+
+    @ResponseBody
+    @PostMapping(value="/memjoinDetail",produces = "application/json;charset=utf-8")
+    public MemJoinAplyVO memjoinDetail(@RequestBody Map<String, String> map) {
+    	log.info("joinVO"+ map.get("stuNo"));
+
+    	MemJoinAplyVO vo = new MemJoinAplyVO();
+
+
+    	vo = memService.memJoinDetail(map);
+
+    	log.info(vo.getAplyCn());
+    	log.info(vo.getAplyTech());
+
+    	return vo;
+
+    }
+
+    @ResponseBody
+    @PostMapping(value="/meminsert",produces = "application/json;charset=utf-8")
+    public String memInsert(@RequestBody MemManagementVO memVO) {
+    	log.info(memVO.getStuNo());
+    	log.info(memVO.getJbttlCd());
+    	log.info(memVO.getTeamJoinDt());
+    	log.info(memVO.getProjNo());
+    	memVO.setProjNo("a001");
+
+    	ServiceResult result = memService.memInsert(memVO);
+
+    	String goPage ="";
+
+    	if (result.equals(ServiceResult.OK)) {
+            goPage = "성공";
+        } else {
+            goPage = "실패";
+        }
+        return goPage;
+    }
+
+
+    @ResponseBody
+    @PostMapping(value="/memdel",produces = "application/json;charset=utf-8")
+    public String memDel(@RequestBody MemManagementVO memVO) {
+    	log.info(memVO.getStuNo());
+    	log.info(memVO.getJbttlCd());
+    	log.info(memVO.getTeamJoinDt());
+    	log.info(memVO.getProjNo());
+    	memVO.setProjNo("a001");
+
+    	ServiceResult result = memService.memDel(memVO);
+
+    	String goPage ="";
+
+    	if (result.equals(ServiceResult.OK)) {
+    		goPage = "성공";
+    	} else {
+    		goPage = "실패";
+    	}
+    	return goPage;
+    }
+
+
+	 @ResponseBody
+	 @PostMapping(value="/projstatus",produces ="application/json;charset=utf-8")
+	 public ProjVO projStatus(@RequestBody ProjVO projVO) {
+
+		 ProjVO vo = new ProjVO();
+		 vo =  memService.projStatus(projVO);
+
+		 return vo;
+	 }
+
+
+
+	 @ResponseBody
+	 @PostMapping(value="/projupdate",produces ="application/json;charset=utf-8")
+	 public ProjVO projUpdate(@RequestBody ProjVO projVO) {
+
+		 ProjVO vo = new ProjVO();
+		 vo =  memService.projUpdate(projVO);
+
+		 return vo;
+	 }
+
+
+	 @ResponseBody
+	 @PostMapping(value="/projdelete",produces ="application/json;charset=utf-8")
+		public String projDelete(@RequestBody ProjVO projVO) {
+		 String goPage ="";
+		 ServiceResult result = memService.projDelete(projVO.getProjNo());
+		 if (result.equals(ServiceResult.OK)) {
+			goPage = "성공";
+		 } else {
+	 		goPage = "실패";
+		 }
+		   return goPage;
+		 }
+
+	 @ResponseBody
+	 @PostMapping(value="/projMemDel",produces = "application/json;charset=utf-8")
+	 public String projMemDel(@RequestBody MemManagementVO memVO) {
+	 	log.info(memVO.getStuNo());
+	 	log.info(memVO.getJbttlCd());
+	 	log.info(memVO.getTeamJoinDt());
+	 	log.info(memVO.getProjNo());
+
+	 	ServiceResult result = memService.projMemDel(memVO);
+
+	 	String goPage ="";
+
+	 	if (result.equals(ServiceResult.OK)) {
+	 		goPage = "성공";
+	 	} else {
+	 		goPage = "실패";
+	 	}
+	 	return goPage;
+	 }
+
+
+/*
+		@ResponseBody
+		@PostMapping(value="/memcount",produces = "application/json;charset=utf-8")
+		public String projMemCount(@RequestBody ProjVO projVO) {
+
+		ServiceResult result = memService.projMemCount(projVO.getProjNo());
+
+		String goPage ="";
+
+		if (result.equals(ServiceResult.OK)) {
+			goPage = "성공";
+		} else {
+			goPage = "실패";
+		} return goPage;
+		}
+
+*/
+
+	 @ResponseBody
+	 @PostMapping(value="/aplydel",produces = "application/json;charset=utf-8")
+	 public String aplyDel(@RequestBody MemJoinAplyVO aplyVO) {
+
+	 	ServiceResult result = memService.aplyDel(aplyVO.getProjNo());
+
+	 	String goPage ="";
+
+	 	if (result.equals(ServiceResult.OK)) {
+	 		goPage = "성공";
+	 	} else {
+	 		goPage = "실패";
+	 	}
+	 	return goPage;
+	 }
+
+	 @ResponseBody
+	 @PostMapping(value="/proj/conupdate",produces = "application/json;charset=utf-8")
+	 public String projConUpdate(@RequestBody ProjVO projVO) {
+
+
+		 ServiceResult result = memService.projConUpdate(projVO);
+		 log.info("projVO.getProjNm(): "+ projVO.getProjNm());
+		 log.info("projVO.getProjExpln(): "+ projVO.getProjExpln());
+		 log.info("projVO.getProjSttsCd(): "+ projVO.getProjSttsCd());
+
+		 String goPage ="";
+
+		 if (result.equals(ServiceResult.OK)) {
+			 goPage = "성공";
+		 } else {
+			 goPage = "실패";
+		 }
+		 return goPage;
+	 }
+
+
+}

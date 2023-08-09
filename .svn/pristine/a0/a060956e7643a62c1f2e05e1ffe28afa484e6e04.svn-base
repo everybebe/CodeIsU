@@ -1,0 +1,39 @@
+package team.tttt.pms.stu.mypage.web;
+
+import javax.inject.Inject;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.vo.CustomUser;
+import team.tttt.pms.common.vo.UserVO;
+import team.tttt.pms.stu.mypage.service.ModifyProfileService;
+
+@Slf4j
+@Controller
+@RequestMapping("/stu/mypage/modify")
+public class ModifyProfileController {
+
+	@Inject
+	ModifyProfileService service;
+
+	@GetMapping("")
+	public String verifyPsMain() {
+		return "stu/com/mypage/modifyProfile/verifyPs";
+	}
+
+	@PostMapping("/verify_ps")
+	public String verifyPs(String userPs, Authentication auth) {
+		CustomUser user = (CustomUser) auth.getPrincipal();
+		UserVO userVO = user.getMember();
+
+		System.out.println(userPs);
+		ServiceResult result = service.verifyPs(userVO.getUserNo(), userPs);
+		return null;
+	}
+}

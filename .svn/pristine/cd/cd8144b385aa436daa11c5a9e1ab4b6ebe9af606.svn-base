@@ -1,0 +1,62 @@
+package team.tttt.pms.emp.svlf.service.impl;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.emp.svlf.mapper.SvlfMapper;
+import team.tttt.pms.emp.svlf.service.SvlfService;
+import team.tttt.pms.emp.vo.EmpVO;
+import team.tttt.pms.emp.vo.SvlfVO;
+
+@Service
+public class SvlfServiceImpl implements SvlfService {
+
+	@Inject
+	private SvlfMapper svlfMapper;
+
+	@Override
+	public List<EmpVO> checkDepartCd() {
+		return svlfMapper.checkDepartCd();
+	}
+
+	@Override
+	public int svlfInsert(SvlfVO svlfVO) {
+		return svlfMapper.svlfInsert(svlfVO);
+	}
+
+	@Override
+	public List<SvlfVO> svlfList() {
+		return svlfMapper.svlfList();
+	}
+
+	@Override
+	public List<CmCdVO> cmCdList() {
+		return svlfMapper.cmCdList();
+	}
+
+	@Override
+	public void cmCdUpdate(String className) {
+		svlfMapper.cmCdUpdate(className);
+	}
+
+	@Override
+	public SvlfVO svlfInfo(String svlfNo) {
+		return svlfMapper.svlfInfo(svlfNo);
+	}
+
+	@Override
+	public int svlfDel(String svlfNo) {
+		return svlfMapper.svlfDel(svlfNo);
+	}
+
+	@Override
+	public void cmCdUpdate2(String className) {
+		svlfMapper.cmCdUpdate2(className);
+
+	}
+
+}

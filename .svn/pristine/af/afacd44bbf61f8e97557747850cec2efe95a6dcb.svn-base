@@ -1,0 +1,41 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+</head>
+<body>
+	<div id='calendar'></div>
+</body>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	var calendarEl = document.getElementById('calendar');
+
+	var calendar = new FullCalendar.Calendar(calendarEl, {
+		locale: "ko",
+		aspectRatio: 1.35,
+		initialView : 'dayGridMonth',
+		events : [ {
+			title : '스프링 오전',
+			start : '2023-07-01',
+			end : '2023-07-21'
+		}, {
+			title : '데이터 베이스 오후',
+			start : '2023-07-01',
+			end : '2023-07-18'
+		} ],
+		headerToolbar : {
+			left : 'prev,next', //
+			center : 'title',
+			right : 'dayGridMonth,dayGridWeek,dayGridDay'
+		},
+
+	});
+	//달력이 요소 내부에 있고 해당 요소의 너비가 동적으로 변경되었을 때 크기를 재조정.
+	//calendar.updateSize()
+
+	calendar.render();
+});
+</script>
+</html>

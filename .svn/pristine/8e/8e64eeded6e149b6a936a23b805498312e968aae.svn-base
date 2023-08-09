@@ -1,0 +1,70 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<style>
+#topDiv{
+	width: 100%;
+	height: 85vh;
+	display: flex;
+	justify-content: center;
+}
+
+#box1{
+	width: 50vw;
+}
+
+#box2{
+	border: 1px solid blue;
+	width: 50vw;
+}
+
+#box3{
+	width: 100%;
+	height: 50%;
+}
+
+#datepicker{
+	width: 100%;
+	height: 100%;
+}
+
+.ui-datepicker-inline{
+	width: auto;
+	height: auto;
+}
+
+.ui-datepicker-inline table{
+	height: 90%;
+}
+
+</style>
+<h1>학생 출결 관리 페이지</h1>
+<div id="topDiv" class="ddiv">
+	<div id="box1" class="ddiv">
+		<div id="box3">
+			<div id="datepicker">
+			</div>
+		</div>
+	</div>
+
+	<div id="box2" class="ddiv">
+	</div>
+</div>
+<script>
+datepickerSet();
+$(function(){
+
+	$("#datepicker").css("display", "show");
+})
+
+function datepickerSet(){
+	$("#datepicker").datepicker({
+		dateFormat : "yy-mm-dd",
+		showMonthAfterYear:true,
+		yearSuffix: "년",
+		dayNames : ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
+		dayNamesMin : ['일','월','화','수','목','금','토'],
+		monthNamesShort : ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames : ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+	});
+}
+</script>

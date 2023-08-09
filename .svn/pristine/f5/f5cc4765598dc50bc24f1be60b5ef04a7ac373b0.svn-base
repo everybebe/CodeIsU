@@ -1,0 +1,14 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<script src="${pageContext.request.contextPath}/assets/libs/jquery/dist/jquery.min.js"></script>
+
+  <!-- Custom $t Js -->
+<script>
+var $t = {
+	header : "${_csrf.headerName}",
+	token : "${_csrf.token}",
+	csrfq : "${_csrf.parameterName }=${_csrf.token}",
+	cpath : "${pageContext.request.contextPath}"
+};
+</script>
+<script src="${pageContext.request.contextPath}/resources/common/js/common.js" type="text/javascript"></script>

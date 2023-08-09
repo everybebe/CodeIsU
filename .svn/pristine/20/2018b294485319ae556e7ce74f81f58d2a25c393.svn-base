@@ -1,0 +1,5 @@
+package team.tttt.pms.stu.main.mapper;
+
+public interface StuMainMapper {
+
+}

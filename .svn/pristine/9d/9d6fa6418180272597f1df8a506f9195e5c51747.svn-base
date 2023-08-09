@@ -1,0 +1,34 @@
+package team.tttt.pms.emp.dscsn.service.impl;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.emp.dscsn.mapper.DscsnMapper;
+import team.tttt.pms.emp.dscsn.service.DscsnService;
+import team.tttt.pms.emp.vo.DscsnVO;
+
+@Service
+public class DscsnServiceImpl implements DscsnService {
+
+	@Inject
+	private DscsnMapper dscsnMapper;
+
+	@Override
+	public List<DscsnVO> dscsnNoList() {
+		return dscsnMapper.dscsnNoList();
+	}
+
+	@Override
+	public List<DscsnVO> dscsnApprovList() {
+		return dscsnMapper.dscsnApprovList();
+	}
+
+	@Override
+	public List<DscsnVO> dscsnUnApprovList() {
+		return dscsnMapper.dscsnUnApprovList();
+	}
+
+}

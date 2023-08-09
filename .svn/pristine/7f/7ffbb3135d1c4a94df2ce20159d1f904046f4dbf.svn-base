@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.cmcode.mapper.CmCodeMapper">
+
+	<!-- 코드 그룹 목록 가져오기 -->
+	<select id="cmtyList" resultType="cmTypeVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.cmtyList -->
+	SELECT
+	    CD_TYPE_ID
+	    , CD_TYPE_NM
+	    , CD_T_USE_YN
+	FROM TB_CM_TYPE
+	</select>
+
+	<!-- 코드 그룹에 속하는 코드 목록 가져오기 -->
+	<select id="codeList" parameterType="String" resultType="CmCdVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.codeList -->
+	SELECT
+	    A.CD_VL
+	    , A.CD_TYPE_ID
+	    , A.CD_NM
+	    , A.CD_EXPLN
+	    , A.CD_C_USE_YN
+	FROM TB_CM_CD A
+	LEFT OUTER JOIN TB_CM_TYPE B ON A.CD_TYPE_ID = B.CD_TYPE_ID
+	WHERE A.CD_TYPE_ID = #{cdTypeId}
+	ORDER BY TO_NUMBER(A.CD_VL) ASC
+	</select>
+
+</mapper>

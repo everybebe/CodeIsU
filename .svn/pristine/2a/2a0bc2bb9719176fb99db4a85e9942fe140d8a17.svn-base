@@ -1,0 +1,81 @@
+package team.tttt.pms.project.myProjects.web;
+
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.project.myProjects.service.myProjectsService;
+import team.tttt.pms.project.vo.PaginationInfoVO;
+import team.tttt.pms.project.vo.ProjVO;
+
+@Controller
+@Slf4j
+@RequestMapping("/pms")
+public class myProjectsController {
+
+	@Inject
+	private myProjectsService myProjectsService;
+
+	@GetMapping(value="/myprojects")
+	public String myProjects() {
+		return "pms/com/myProjects";
+
+	}
+
+	@ResponseBody
+	@GetMapping(value="/myprojlist", produces = "application/json;charset=utf-8")
+	public List<ProjVO> myProjList(ProjVO vo){
+
+		log.info("public List<ProjVO> myProjList(String stuNo, String projSttsCd) " + vo);
+
+		List<ProjVO> list = myProjectsService.myProjList(vo);
+		log.info("public List<ProjVO> myProjList : " + list);
+		return list;
+	}
+
+	@ResponseBody
+	@GetMapping(value="/ready", produces = "application/json;charset=utf-8")
+	 public List<ProjVO> ready(String stuNo,
+			 @RequestParam(required= false, defaultValue="projNm") String searchType,
+			 @RequestParam(required = false)String searchWord, Model model) {
+
+
+		log.info("List<ProjVO> ready - stuNo : " + stuNo);
+
+		PaginationInfoVO<ProjVO> pagingVO = new PaginationInfoVO<ProjVO>();
+		//검색 기능 추가 시 활용
+		if(StringUtils.isNotBlank(searchWord)) { //검색 함
+			pagingVO.setSearchType(searchType);
+			pagingVO.setSearchWord(searchWord);
+			model.addAttribute("searchType", searchType);
+			model.addAttribute("searchWord", searchWord);
+
+		}
+
+		List<ProjVO> list = myProjectsService.ready(stuNo);
+		log.info("List<ProjVO> ready - list: " + list);
+
+		model.addAttribute("pagingVO",pagingVO);
+		return list;
+	 }
+
+
+	@GetMapping(value="/dashboard")
+	public String dashBoard(String aplyProjNo, Model model) {
+
+
+		return "redirect: /pms/project/dashBoard?projNo"+aplyProjNo;
+	}
+}

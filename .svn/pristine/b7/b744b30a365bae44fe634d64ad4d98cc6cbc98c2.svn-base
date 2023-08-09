@@ -1,0 +1,106 @@
+        gantt.attachEvent("onAfterTaskDrag", function (id, mode) {
+          var task = gantt.getTask(id);
+          if (mode == gantt.config.drag_mode.progress) {
+            var pr = Math.floor(task.progress * 100 * 10) / 10;
+            gantt.message(task.text + " is now " + pr + "% completed!");
+            console.log('간트 차트 onAfterTaskDrag if task', task);
+            console.log('간트 차트 onAfterTaskDrag if task.text', task.text);
+            console.log('간트 차트 onAfterTaskDrag if pr', pr);
+          } else {
+            var convert = gantt.date.date_to_str("%H:%i, %F %j");
+            var s = convert(task.start_date);
+            var e = convert(task.end_date);
+            console.log('간트 차트 onAfterTaskDrag else'+task.text + "시작 " + s + " 끝 " + e);
+          }
+        });
+
+        gantt.attachEvent("onBeforeTaskChanged", function (id, mode, old_event) {
+          var task = gantt.getTask(id);
+          if (mode == gantt.config.drag_mode.progress) {
+            if (task.progress < old_event.progress) {
+              console.log('간트 차트 onBeforeTaskChanged'+ task.text)
+              return false;
+            }
+          }
+          return true;
+        });
+
+        gantt.attachEvent("onBeforeTaskDrag", function (id, mode) {
+          var task = gantt.getTask(id);
+          var message = task.text + " ";
+
+          if (mode == gantt.config.drag_mode.progress) {
+            message += "progress is being updated";
+          } else {
+            message += "is being ";
+            if (mode == gantt.config.drag_mode.move)
+              message += "moved";
+            else if (mode == gantt.config.drag_mode.resize)
+              message += "resized";
+          }
+
+          console.log(message)
+          return true;
+        });
+
+
+
+
+        // 간트차트 resize
+
+		// keeps or not the width of the grid area when column is resized
+		gantt.config.keep_grid_width = false;
+		gantt.config.grid_resize = true;
+
+		// return false to discard the resize
+		gantt.attachEvent("onColumnResizeStart", function (index, column) {
+			gantt.message("Start resizing <b>" + gantt.locale.labels["column_" + column.name] + "</b>");
+			return true;
+		});
+
+		var message = null;
+		gantt.attachEvent("onColumnResize", function (index, column, new_width) {
+			if (!message) {
+				message = gantt.message({
+					expire: -1,
+					text: "<b>" + gantt.locale.labels["column_" + column.name] + "</b> is now <b id='width_placeholder'></b><b>px</b> width"
+				});
+			}
+			document.getElementById("width_placeholder").innerText = new_width
+		});
+
+		// return false to discard the resize
+		gantt.attachEvent("onColumnResizeEnd", function (index, column, new_width) {
+			gantt.message.hide(message);
+			message = null;
+			gantt.message("Column <b>" + gantt.locale.labels["column_" + column.name] + "</b> is now " + new_width + "px width");
+			return true;
+		});
+
+		// GRID resize events
+
+		// return false to discard the resize
+		gantt.attachEvent("onGridResizeStart", function (old_width) {
+			gantt.message("Start grid resizing");
+			return true;
+		});
+
+		gantt.attachEvent("onGridResize", function (old_width, new_width) {
+			if (!message) {
+				message = gantt.message({
+					expire: -1,
+					text: "Grid is now <b id='width_placeholder'></b><b>px</b> width"
+				});
+			}
+			document.getElementById("width_placeholder").innerText = new_width;
+		});
+
+		// return false to discard the resize
+		gantt.attachEvent("onGridResizeEnd", function (old_width, new_width) {
+			gantt.message.hide(message);
+			message = null;
+			gantt.message("Grid is now <b>" + new_width + "</b>px width");
+			return true;
+		});
+
+

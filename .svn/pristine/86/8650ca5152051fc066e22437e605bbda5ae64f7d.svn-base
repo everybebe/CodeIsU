@@ -1,0 +1,9 @@
+package team.tttt.pms.stu.hakup.service;
+
+import team.tttt.pms.stu.vo.StuVO;
+
+public interface AttdanService {
+
+	public StuVO selectStu(String userNo);
+
+}

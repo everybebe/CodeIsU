@@ -1,0 +1,15 @@
+package team.tttt.pms.emp.dscsn.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.emp.vo.DscsnVO;
+
+@Mapper
+public interface DscsnMapper {
+
+	public List<DscsnVO> dscsnNoList();
+	public List<DscsnVO> dscsnApprovList();
+	public List<DscsnVO> dscsnUnApprovList();
+}

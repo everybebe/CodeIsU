@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.Issue.mapper.PmsIssueMapper">
+
+	<sql id="boardSearch">
+		<if test="searchType != null and searchType == 'title'">
+			and (ISSUE_TTL like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'writer'">
+			and (user_NM like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'titleWriter'" >
+			and (user_NM like '%'||#{searchWord}||'%') or
+			(ISSUE_TTL like '%'||#{searchWord}||'%')
+		</if>
+	</sql>
+
+
+	<select id="getIssueList" parameterType="PaginationInfoVO" resultType="IssueVO">
+	/* team.tttt.pms.project.Issue.mapper.PmsIssueMapper.getIssueList */
+
+		select b.*
+			from(
+				select
+					a.*
+					, row_number() over (order by a.ISSUE_REG_DT desc) rnum
+				from(
+	    select
+		    a.PROJ_NO
+		    , a.STU_NO
+		    , TO_CHAR(a.ISSUE_REG_DT, 'yyyy-mm-dd') as ISSUE_REG_DT
+		    , d.CD_NM as ISSUE_CD
+		    , a.ISSUE_TTL
+		    , a.ISSUE_CN
+		    , c.CD_NM as ISSUE_STTS_CD
+		    , a.ISSUE_NO
+	        , s.user_NM as user_nm
+	    from
+	    	tb_issue a
+	        join tb_stu s on a.STU_NO  = s.STU_NO
+
+		    join tb_cm_cd c on c.CD_TYPE_ID = SUBSTR(a.ISSUE_STTS_CD, 1, INSTR(a.ISSUE_STTS_CD, '-') -1)
+		    and c.CD_VL = SUBSTR(a.ISSUE_STTS_CD, INSTR(a.ISSUE_STTS_CD, '-') + 1)
+		    and c.CD_TYPE_ID = 'P006'
+		    and c.CD_C_USE_YN = 'Y'
+
+		    join tb_cm_cd d on d.CD_TYPE_ID = SUBSTR(a.ISSUE_CD, 1, INSTR(a.ISSUE_CD, '-') -1)
+		    and d.CD_VL = SUBSTR(a.ISSUE_CD, INSTR(a.ISSUE_CD, '-') + 1)
+		    and d.CD_TYPE_ID = 'P007'
+		    and d.CD_C_USE_YN = 'Y'
+		where
+			proj_no = #{projNo}
+			<include refid="boardSearch"/>
+
+		order by ISSUE_REG_DT desc
+				) a
+			) b
+		<![CDATA[
+			where b.rnum >= #{startRow} and b.rnum <= #{endRow}
+		]]>
+
+	</select>
+
+
+	<select id="selectBoardCount" parameterType="PaginationInfoVO" resultType="int">
+		select
+			count(ISSUE_NO)
+		from
+			tb_issue
+		where
+			proj_no = #{projNo}
+		<include refid="boardSearch"/>
+	</select>
+
+
+
+</mapper>

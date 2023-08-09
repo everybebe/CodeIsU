@@ -1,0 +1,322 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+<style>
+  .task {
+    background-color: #f4f2f2;
+  }
+  .taskCn {
+    background-color: #f4f2f2;
+  }
+
+  .msubBtn {
+    background-color: #56726a;
+    color: white;
+  }
+  .mcanBtn {
+    border: 1px solid gray;
+  }
+
+  .circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+
+  #thumnailBox {
+    border: 1px solid black;
+    width: 200px;
+    height: 200px;
+  }
+</style>
+
+<div class="card" id="storageList"></div>
+
+<div
+  class="modal fade"
+  id="storageModal"
+  role="dialog"
+  aria-labelledby="storageModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog d-flex justify-content-center" role="document">
+    <div class="modal-content" id="storageModalBody"></div>
+  </div>
+</div>
+
+<script>
+  const projNo = "a005";
+  let page;
+  let searchType;
+  let searchWord;
+
+  const storageList = (projNo, page, searchType, searchWord) => {
+    if (page == null) {
+      page = 1;
+    }
+
+    if (searchType == null) {
+      searchType = "title";
+    }
+
+    $.ajax({
+      url: "/pms/project/storageList",
+      data: {
+        projNo: projNo,
+        currentPage: page,
+        searchType: searchType,
+        searchWord: searchWord,
+      },
+      type: "get",
+      dataType: "json",
+      success: function (res) {
+        console.log(res);
+        console.log(res.pagingVO);
+        console.log(res.pagingVO.dataList);
+
+        const dataList = res.pagingVO.dataList;
+        const pagingHTML = res.pagingVO.pagingHTML;
+
+        let projectStorageList = `
+
+        <form class="input-group input-group-outline" id="searchForm">
+            <input type="hidden" name="page" id="page" />
+            <div class="col-md-1">
+                <div class="input-group input-group-static mb-4">
+                <select class="form-control" id="searchType">
+                    <option value="title" id="searchTypeTitle">제목</option>
+                    <option value="writer" id="searchTypeWriter">작성자</option>
+                    <option value="titleWriter" id="searchTypeTitleWriter">제목+작성자</option>
+                </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="ms-md-auto">
+                <label class="form-label"></label>
+                <input type="text" id="searchWord" name="searchWord" class="form-control" placeholder="Search" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="searchBtn" class="btn btn-outline-secondary">
+                <i class="fas fa=search"></i>검색
+                </button>
+            </div>
+
+            <div class="col-md-2">
+                <button type="button" id="insertStorageBtn" class="btn btn-outline-secondary">
+                <i class="fas fa=search"></i>등록
+                </button>
+            </div>
+
+        </form>
+
+
+  <div class="table-responsive">
+    <table class="table align-items-center mb-0">
+      <thead>
+        <tr>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+          >
+            번호
+          </th>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+          >
+            제목
+          </th>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+          >
+            등록자
+          </th>
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+          >
+            등록일
+          </th>
+          <!--
+          <th
+            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+          >
+            수정일
+          </th>
+          -->
+        </tr>
+      </thead>
+      <tbody>
+        `;
+        for (let i = 0; i < dataList.length; i++) {
+          projectStorageList += `
+        <tr>
+          <td>
+            <div class="my-auto">
+              <h6 class="mb-0 text-xs">\${dataList[i].rnum}</h6>
+            </div>
+          </td>
+          <td>
+            <div class="my-auto">
+              <h6 class="mb-0 text-xs">\${dataList[i].strTitle}</h6>
+            </div>
+          </td>
+
+          <td>\${dataList[i].userNm}</td>
+
+          <td>\${dataList[i].strRegDt}</td>
+        </tr>
+        `;
+        }
+
+        projectStorageList += `
+            </tbody>
+            </table>
+        </div>
+        <div class="card-footer clearfix" id="pagingArea">
+            \${pagingHTML}
+        </div>
+        `;
+        $("#storageList").html(projectStorageList);
+        $("#page").val(page);
+        $("#searchType").val(searchType);
+        $("#searchWord").val(searchWord);
+        console.log(
+          "page, searchType, searchWord : ",
+          page,
+          searchType,
+          searchWord
+        );
+        pagingClick();
+
+        insertBtn();
+      },
+      error: function (xhr) {
+        console.log("storageList 상태: " + xhr.status);
+      },
+    });
+  };
+
+  storageList(projNo, page, searchType, searchWord);
+
+  const pagingClick = () => {
+    let searchForm = $("#searchForm");
+    let pagingArea = $("#pagingArea");
+
+    let searchBtn = $("#searchBtn");
+
+    let shWord = "";
+    let shType = "";
+
+    searchBtn.on("click", function () {
+      shWord = $("#searchWord").val();
+      shType = $("#searchType").val();
+
+      storageList(projNo, page, shType, shWord);
+    });
+
+    pagingArea.on("click", "a", function (event) {
+      event.preventDefault();
+      var pageNo = $(this).data("page");
+      searchForm.find("#page").val(pageNo);
+
+      shWord = $("#searchWord").val();
+      shType = $("#searchType").val();
+
+      storageList(projNo, pageNo, shType, shWord);
+    });
+  };
+
+  const insertBtn = () => {
+    let insertStorageBtn = $("#insertStorageBtn");
+
+    insertStorageBtn.on("click", function () {
+      const insetModalBody = `
+          <div class="modal-header">
+              <h5 class="modal-title font-weight-normal" id="taskinsertModalLabel">
+                자료 등록
+              </h5>
+            </div>
+            <div class="modal-body">
+              <div class="container">
+                <div class="row">
+                  <div class="col-sm">
+                    <label class="form-label mb-0" for="thumnailBox">미리보기</label>
+                    <div id="thumnailBox" class="taskCn"></div>
+                  </div>
+
+                  <div class="col-sm">
+                    <div>
+                      <label class="form-label mb-0" for="taskinsertTitle">제목</label>
+                      <input
+                        type="text"
+                        id="taskinsertTitle"
+                        name="taskTitle"
+                        class="form-control task mb-1"
+                      />
+
+                      <label class="form-label mb-0" for="taskinsertCn">내용</label>
+                      <textarea
+                        class="form-control task mb-1 Cn"
+                        id="taskinsertCn"
+                        name="taskCn"
+                      ></textarea>
+
+                      <input
+                        type="file"
+                        multiple="multiple"
+                        id="fileInput"
+                        class="form-control-file text-xs w-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" id="insertSaveBtn" class="btn bg msubBtn">
+                      저장
+                    </button>
+
+                    <button
+                      type="button"
+                      id="insertStorageBtn"
+                      class="btn btn-outline-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      <i class="fas fa=search"></i>취소
+                    </button>
+                    <div></div>
+                  </div>
+                </div>
+      `;
+      $("#storageModalBody").html(insetModalBody);
+
+      $("#storageModal").modal("show");
+      fileEvent();
+    });
+  };
+
+  const fileEvent = () => {
+    console.log("const fileEvent = () => {  실행");
+    const fileInput = document.getElementById("fileInput");
+    fileInput.addEventListener("change", setThumbnail);
+  };
+
+  const setThumbnail = (event) => {
+    console.log("function setThumbnail(event)  실행");
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+      var thumbnailBox = document.querySelector("div#thumnailBox");
+
+      while (thumbnailBox.firstChild) {
+        thumbnailBox.firstChild.remove();
+      }
+
+      var img = document.createElement("img");
+      img.setAttribute("src", event.target.result);
+      img.style.height = "100%";
+      img.style.width = "100%";
+      document.querySelector("div#thumnailBox").appendChild(img);
+    };
+
+    reader.readAsDataURL(event.target.files[0]);
+  };
+</script>

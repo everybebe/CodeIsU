@@ -1,0 +1,164 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+
+<style>
+  #wrapper {
+    width: 650px;
+    height: 500px;
+    margin: 50px auto;
+    text-align: center;
+  }
+  #myGrid {
+    height: 100%;
+  }
+  /* 헤더 텍스트 가운데 정렬 위함 */
+  .centered {
+    .ag-header-cell-label {
+      justify-content: center !important;
+    }
+  }
+</style>
+
+<div id="wrapper">
+  <div id="myGrid" class="ag-theme-alpine"></div>
+</div>
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="taskInsertModal"
+  role="dialog"
+  aria-labelledby="taskInsertModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog d-flex justify-content-center" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title font-weight-normal" id="taskInsertModalLabel">
+          일감 등록하기
+        </h5>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <label class="form-label" for="taskTitle">제목</label>
+          <input
+            type="text"
+            id="taskTitle"
+            name="taskTitle"
+            class="form-control task"
+          />
+
+          <label class="form-label" for="taskStts" class="ms-0">상태</label>
+          <select class="form-select task" id="taskStts" name="taskStts">
+            <option value="대기" selected>"대기"</option>
+            <option value="진행">진행</option>
+            <option value="완료">완료</option>
+            <option value="지연">지연</option>
+          </select>
+
+          <label class="form-label" for="taskPic">담당자</label>
+          <input
+            type="text"
+            name="taskPic"
+            id="taskPic"
+            class="form-control task"
+          />
+
+          <label class="form-label" for="taskBengDt">시작날짜</label>
+          <input
+            type="date"
+            name="taskBengDt"
+            id="taskBengDt"
+            class="form-control task"
+          />
+
+          <label class="forms-label" for="taskDdlnDt">종료날짜</label>
+          <input
+            type="date"
+            id="taskDdlnDt"
+            name="taskDdlnDt"
+            class="form-control task"
+          />
+
+          <label class="form-label" for="taskPriority">우선순위</label>
+          <select
+            class="form-select task"
+            id="taskPriority"
+            name="taskPriority"
+            aria-label="Default select example"
+          >
+            <option value="낮음" selected>낮음</option>
+            <option value="보통">보통</option>
+            <option value="긴급">긴급</option>
+          </select>
+
+          <label class="form-label" for="taskCn">내용</label>
+          <textarea
+            class="form-control taskCn"
+            id="taskCn"
+            name="taskCn"
+          ></textarea>
+
+          <div class="modal-footer">
+            <button type="button" class="btn bg msubBtn">등록</button>
+            <button
+              type="button"
+              class="btn bg mcanBtn"
+              data-bs-dismiss="modal"
+            >
+              닫기
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+<script>
+  var projNo = "a001";
+
+  const columnDefs = [
+    { field: "projNo" },
+    { field: "taskBengDt" },
+    { field: "taskCn" },
+    { field: "taskPriority" },
+    { field: "taskRegDt" },
+    { field: "taskSttr" },
+    { field: "taskStts" },
+    { field: "taskTitle" },
+    { field: "upperTask" },
+  ];
+
+  const rowData = [];
+
+  function getData() {
+    $.ajax({
+      url: "/pms/project/taskListOut?${_csrf.parameterName}=${_csrf.token}",
+      data: {
+        projNo: projNo,
+      },
+      type: "POST",
+      contentType: "application/json",
+      dataType: "json",
+      success: function (res) {
+        gridOptions.api.setRowData(res);
+      },
+      error: function (xhr, status, error) {
+        console.error(error);
+      },
+    });
+  }
+
+  const gridOptions = {
+    columnDefs: columnDefs,
+    rowData: rowData,
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const gridDiv = document.querySelector("#myGrid");
+    new agGrid.Grid(gridDiv, gridOptions);
+    getData();
+  });
+</script>

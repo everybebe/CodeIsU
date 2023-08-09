@@ -1,0 +1,30 @@
+package team.tttt.pms.emp.cmcode.service.impl;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.emp.cmcode.mapper.CmCodeMapper;
+import team.tttt.pms.emp.cmcode.service.CmCodeService;
+import team.tttt.pms.emp.vo.cmTypeVO;
+
+@Service
+public class CmCodeServiceImpl implements CmCodeService {
+
+	@Inject
+	private CmCodeMapper cmCodeMapper;
+
+	@Override
+	public List<cmTypeVO> cmtyList() {
+		return cmCodeMapper.cmtyList();
+	}
+
+	@Override
+	public List<CmCdVO> codeList(String cdTypeId) {
+		return cmCodeMapper.codeList(cdTypeId);
+	}
+
+}

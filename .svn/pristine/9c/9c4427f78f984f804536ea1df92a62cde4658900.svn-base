@@ -1,0 +1,74 @@
+package team.tttt.webapp.pms.task.web;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.ibatis.annotations.Delete;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.webapp.common.enums.ServiceResult;
+import team.tttt.webapp.pms.task.service.ProjectTaskService;
+import team.tttt.webapp.vo.TaskVO;
+
+@RequestMapping("/pms/project")
+@Slf4j
+@Controller
+public class ProjectTaskController{
+
+	@Inject
+	private ProjectTaskService service;
+
+	@GetMapping("/taskList")
+	public String getTaskList() {
+
+		return "pms/com/taskBoard";
+
+	}
+
+	@PostMapping("/taskListOut")
+	@ResponseBody
+	public List<TaskVO> getTaskList(String projNo) {
+
+	System.out.println("-----------------["+projNo+"]--------------------");
+	List<TaskVO> taskList = service.taskList(projNo);
+	log.info(taskList.size()+"");
+
+	return taskList;
+	}
+
+	@GetMapping("/taskDetail")
+	@ResponseBody
+	public TaskVO getDetailTask(String taskNo) {
+		System.out.println(taskNo+"--------------- taskNo getDetailTask");
+		TaskVO vo = service.getDetailTask(taskNo);
+		return vo;
+	}
+
+
+	@Delete("/taskDelete")
+	public String deleteTask(String taskNo) {
+
+		String msg;
+
+
+		ServiceResult result = service.taskDelete(taskNo);
+
+        if (result.equals(ServiceResult.OK)) {
+            msg = "성공";
+        } else {
+        	msg = "실패";
+        }
+		return msg;
+	}
+
+
+
+
+}

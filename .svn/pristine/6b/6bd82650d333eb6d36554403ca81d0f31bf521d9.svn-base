@@ -1,0 +1,14 @@
+package team.tttt.pms.project.Issue.service;
+
+import java.util.List;
+
+import team.tttt.pms.project.vo.IssueVO;
+import team.tttt.pms.project.vo.PaginationInfoVO;
+
+public interface PmsIssueService {
+
+	int selectBoardCount(PaginationInfoVO<IssueVO> pagingVO);
+
+	List<IssueVO> getIssueList(PaginationInfoVO<IssueVO> pagingVO);
+
+}

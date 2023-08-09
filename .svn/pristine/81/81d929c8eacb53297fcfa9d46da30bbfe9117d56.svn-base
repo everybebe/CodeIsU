@@ -1,0 +1,11 @@
+package team.tttt.pms.tch.classroom.service;
+
+import java.util.List;
+
+import team.tttt.pms.tch.vo.TchVO;
+
+public interface ClassroomMainService {
+
+	public List<TchVO> selectClassList(String userNo);
+
+}

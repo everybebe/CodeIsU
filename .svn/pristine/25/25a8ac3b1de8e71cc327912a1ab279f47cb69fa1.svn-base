@@ -1,0 +1,18 @@
+package team.tttt.pms.tch.classroom.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import team.tttt.pms.tch.vo.AsmtVO;
+import team.tttt.pms.tch.vo.QstDtlVO;
+import team.tttt.pms.tch.vo.QstVO;
+
+@Mapper
+public interface TchAsmtMapper {
+
+	public int insertAsmt(AsmtVO asmtVO);
+
+	public int insertQst(QstVO qstVO);
+
+	public int insertQstDtl(QstDtlVO qstDtlVO);
+
+}

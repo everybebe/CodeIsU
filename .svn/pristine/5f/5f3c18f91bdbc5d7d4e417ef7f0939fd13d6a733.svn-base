@@ -1,0 +1,23 @@
+package team.tttt.pms.common.user.service;
+
+import java.util.Map;
+
+import team.tttt.pms.common.enums.ServiceResult;
+import team.tttt.pms.common.vo.SmsVO;
+import team.tttt.pms.common.vo.UserVO;
+
+public interface UserService {
+
+	public ServiceResult insertUser(UserVO userVO);
+
+	public ServiceResult phoneCheck(Map<String, String> phoneInfo);
+
+	public ServiceResult sendMessage(String string);
+
+	public ServiceResult matchNum(SmsVO replyNum);
+
+	public Map<String, String> readSvlfNm(String userNm, String userPhone);
+
+
+
+}

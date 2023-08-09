@@ -1,0 +1,31 @@
+package team.tttt.pms.stu.main.service.impl;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import team.tttt.pms.emp.vo.AttdVO;
+import team.tttt.pms.stu.main.mapper.DongMapper;
+import team.tttt.pms.stu.main.service.DongService;
+
+@Service
+public class DongServiceImpl implements DongService {
+
+	@Inject
+	private DongMapper dongMapper;
+
+	@Override
+	public AttdVO userCheck(AttdVO dataVO) {
+		return dongMapper.userCheck(dataVO);
+	}
+
+	@Override
+	public int insertAttd(AttdVO dataVO) {
+		return dongMapper.insertAttd(dataVO);
+	}
+
+	@Override
+	public int inClass(AttdVO attdVO) {
+		return dongMapper.inClass(attdVO);
+	}
+}

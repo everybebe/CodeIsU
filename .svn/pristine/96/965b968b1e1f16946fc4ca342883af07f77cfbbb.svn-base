@@ -1,0 +1,356 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib  uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<style>
+.img{
+	height: 80px;
+	width: 80px;
+}
+
+table tbody tr{
+	cursor: pointer;
+}
+
+.btnGroup{
+	background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.inLabel{
+	font-weight: bold;
+	color: black;
+}
+
+thead{
+	text-align: center;
+}
+
+th{
+	color: black;
+	font-weight: bold;
+}
+
+.table tbody{
+	text-align: center;
+	color: black;
+}
+
+.table-bordered td:first-child,
+.table-bordered th:first-child{
+	border-left: none;
+}
+
+.table-bordered td:last-child,
+.table-bordered th:last-child {
+    border-right: none;
+}
+
+.table thead th,
+.table tbody td{
+    border-bottom: 1.5px solid black;
+}
+
+</style>
+
+<div class="row justify-content-between">
+	<div class="row" style="width: 560px;">
+		<div class="card" style="margin-bottom: 10px;">
+			<div class="card-body" style="padding: 0;">
+				<h1 id="currentDate"></h1>
+				<h1 id="clock"></h1>
+			</div>
+		</div>
+
+		<div class="card" style="margin-bottom: 10px;">
+			<div class="card-body" style="padding: 0;">
+				<div class="col" style="height: 50px;">
+					<h2>상담</h2>
+				</div>
+				<div class="row">
+					<div class="col-4" style="height: 100px;text-align: center;">
+						<h4>미승인 상담</h4>
+						<h2 id="dscsn1">-건</h2>
+					</div>
+
+					<div class="col-4" style="height: 100px;text-align: center;">
+						<h4>오늘 상담</h4>
+						<h2 id="dscsn2">-건</h2>
+					</div>
+
+					<div class="col-4" style="height: 100px;text-align: center;">
+						<h4>내일 상담</h4>
+						<h2 id="dscsn3">-건</h2>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card" style="height: 300px; width: 600px; margin-bottom: 10px;">
+		<div class="card-body" style="padding: 0;">
+			<div class="row">
+				<div class="col-12" style="height: 30px;">
+					<p style="font-weight: bold;">바로가기</p>
+				</div>
+			</div>
+			<div class="row align-items-center" style="height: 135px;">
+				<div class="col-3 text-center">
+					<!-- 공지사항 -->
+					<button class="btnGroup" id="hntcBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-noticeboard-10001797.png" class="img"/></button>
+					<br><label class="inLabel">공지사항</label>
+				</div>
+				<div class="col-3 text-center">
+					<!-- 상담 -->
+					<button class="btnGroup" id="dscsnBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-discussion-4596176.png" class="img"/></button>
+					<br><label class="inLabel">상담</label>
+				</div>
+				<div class="col-3 text-center">
+					<!-- 연수과정 -->
+					<button class="btnGroup" id="svlfBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-design-process-10150306.png" class="img"/></button>
+					<br><label class="inLabel">연수과정</label>
+				</div>
+				<div class="col-3 text-center">
+					<!-- 수업목록 -->
+					<button class="btnGroup" id="sbjctBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-open-book-2702172.png" class="img"/></button>
+					<br><label class="inLabel">수업목록</label>
+				</div>
+			</div>
+
+			<div class="row align-items-center" style="height: 135px;">
+				<div class="col-3 text-center">
+					<!-- 공통코드 -->
+					<button class="btnGroup" id="cmCodeBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-browser-1137216.png" class="img"/></button>
+					<br><label class="inLabel">공통코드</label>
+				</div>
+				<div class="col-3 text-center">
+					<!-- 시간표 -->
+					<button class="btnGroup" id="scheduleBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-schedule-2655034.png" class="img"/></button>
+					<br><label class="inLabel">시간표</label>
+				</div>
+				<div class="col-3 text-center">
+					<!-- 학생출결 -->
+					<button class="btnGroup" id="attdBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-attendance-3448601.png" class="img"/></button>
+					<br><label class="inLabel">학생출결</label>
+				</div>
+				<div class="col-3 text-center">
+					<!-- 조퇴/외출 -->
+					<button class="btnGroup" id="kalleaveBtn"><img src="${pageContext.request.contextPath}/resources/img/emp/free-icon-absent-4753119.png" class="img"/></button>
+					<br><label class="inLabel">조퇴/외출</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="row">
+	<div class="card" style="height: 450px; margin-bottom: 10px;">
+		<div class="card-body" style="padding: 0;">
+
+					<table class="table table-bordered border-dark table-hover">
+						<thead class="table" style="font-weight: bold;">
+							<tr>
+								<th class="p-2" colspan="5" style="text-align: center;">공지사항</th>
+							</tr>
+							<tr>
+								<th class="p-2">글번호</th>
+								<th class="p-2">제목</th>
+								<th class="p-2">작성지</th>
+								<th class="p-2">작성일</th>
+								<th class="p-2">조회수</th>
+							</tr>
+						</thead>
+						<tbody class="table" id="hntcBody">
+						</tbody>
+					</table>
+
+		</div>
+	</div>
+</div>
+
+<script>
+feather.replace();
+var userNo = '<sec:authentication property="principal.member.userNo"/>'
+
+$(function(){
+
+	$("#hntcBody").on("click", "tr", function(){
+		let no = $(this).find("td:eq(0)").text();
+
+		location.href = "/emp/hntc/mainHntcDetail?bono="+no;
+	})
+
+	function updateDate() {
+		const now = new Date();
+		const year = now.getFullYear();
+		const month = (now.getMonth() + 1).toString().padStart(2, '0');
+		const day = now.getDate().toString().padStart(2, '0');
+
+		// 날짜를 표시하는 div 요소에 현재 날짜를 설정
+		$("#currentDate").text(year + "년" + month + "월" + day + "일");
+	}
+	setInterval(updateDate, 1000);
+	updateDate();
+
+	noapprovdscsn(userNo);
+	todaydscsn(userNo);
+	tomorrowdscsn(userNo);
+
+	startTime();
+	mainhntc();
+
+	var hntcBtn = $("#hntcBtn");
+	var dscsnBtn = $("#dscsnBtn");
+	var svlfBtn = $("#svlfBtn");
+	var sbjctBtn = $("#sbjctBtn");
+	var cmCodeBtn = $("#cmCodeBtn");
+	var scheduleBtn = $("#scheduleBtn");
+	var attdBtn = $("#attdBtn");
+	var kalleaveBtn = $("#kalleaveBtn");
+
+	hntcBtn.on("click", function(){
+		location.href = "/emp/hntc/hntcBoard"
+	})
+
+	dscsnBtn.on("click", function(){
+		location.href = "/emp/dscsn/dscsnBoard"
+	})
+
+	svlfBtn.on("click", function(){
+		location.href = "/emp/svlf/svlfList"
+	})
+
+	sbjctBtn.on("click", function(){
+		location.href = "/emp/sbjct/sbjctList"
+	})
+
+	cmCodeBtn.on("click", function(){
+		location.href = "/emp/cmcode"
+	})
+
+	scheduleBtn.on("click", function(){
+		location.href = "/emp/class/schedule"
+	})
+
+	attdBtn.on("click", function(){
+		location.href = "/emp/stuman/attend"
+	})
+
+	kalleaveBtn.on("click", function(){
+		location.href = "/emp/stuman/kalleave"
+	})
+})
+
+function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    h = checkTime(h);
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
+    var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+    if (i < 10) {i = "0" + i}; // 숫자가 10보다 작을 경우 앞에 0을 붙여줌
+    return i;
+}
+
+function noapprovdscsn(userNo){
+	$.ajax({
+		url : "/emp/dscsn/noapprovdscsn",
+		type : "get",
+		data : {"userNo":userNo},
+		dataType : "text",
+		success : function(res){
+			$("#dscsn1").text(res+"건");
+		},
+		error : function(xhr){
+			console.log("1"+res);
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+
+function todaydscsn(userNo){
+	$.ajax({
+		url : "/emp/dscsn/todaydscsn",
+		type : "get",
+		data : {"userNo":userNo},
+		dataType : "text",
+		success : function(res){
+			$("#dscsn2").text(res+"건");
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+
+function tomorrowdscsn(userNo){
+	$.ajax({
+		url : "/emp/dscsn/tomorrowdscsn",
+		type : "get",
+		data : {"userNo":userNo},
+		dataType : "text",
+		success : function(res){
+			$("#dscsn3").text(res+"건");
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+
+function mainhntc(){
+	$.ajax({
+		url : "/emp/hntc/hntcList",
+		type : "get",
+		dataType : "json",
+		success : function(res){
+			var str = "";
+
+			if(res.length == 0){
+				str += `
+				<tr>
+					<td class="p-1">조회할 공지사항이 없습니다.</td>
+				</tr>`
+			}else{
+				if(res.length > 5){
+					for(let i=0; i<9; i++){
+						str += `
+							<tr>
+								<td class="p-1">\${res[i].hntcNo}</td>
+								<td style="text-align: left;" class="p-1">\${res[i].hntcNm}</td>
+								<td class="p-1">\${res[i].empNo}</td>
+								<td class="p-1">\${res[i].hntcDt}</td>
+								<td class="p-1">\${res[i].hntcCn}</td>
+							</tr>`
+						}
+				}else{
+					for(let i=0; i<res.length; i++){
+						str += `
+							<tr>
+								<td class="p-1">\${res[i].hntcNo}</td>
+								<td style="text-align: left;" class="p-1">\${res[i].hntcNm}</td>
+								<td class="p-1">\${res[i].empNo}</td>
+								<td class="p-1">\${res[i].hntcDt}</td>
+								<td class="p-1">\${res[i].hntcCn}</td>
+							</tr>`
+						}
+				}
+			}
+
+			$("#hntcBody").html(str);
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+</script>

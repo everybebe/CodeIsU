@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.createProj.mapper.CreateProjMapper">
+
+<!-- 프로젝트 리스트 가져오기 -->
+<select id="projList" resultType="ProjVO" >
+	SELECT
+	PROJ_NM
+	, PROJ_EXPLN
+	, PROJ_TNOPE
+	, PROJ_BGNG_DT
+	, PROJ_DDLN_DT
+	, PROJ_STTR
+	FROM TB_PROJ
+	ORDER BY PROJ_NO DESC
+</select>
+
+<!-- 프로젝트 생성 -->
+<insert id="insertProj" parameterType="ProjVO">
+	INSERT INTO TB_PROJ(
+	PROJ_NO
+	, PROJ_NM
+	, PROJ_EXPLN
+	, PROJ_BGNG_DT
+	, PROJ_DDLN_DT
+	, PROJ_TECH
+	) VALUES(
+	'a0' || seq_tb_proj.nextval
+	, #{projNm}
+	, #{projExpln}
+	, #{projBgngDt}
+	, #{projDdlnDt}
+	, #{projTech}
+	)
+</insert>
+
+<!-- 프로젝트 진행상태 (대기) -->
+<update id="projSttsCd1" parameterType="String">
+	<![CDATA[
+		update tb_proj
+		set
+		PROJ_STTS_CD = 'P002-1'
+		where
+		trunc(sysdate) < to_date(TB_PROJ.PROJ_BGNG_DT, 'YYYYMMDD')
+	]]>
+</update>
+
+<!-- 프로젝트 진행상태 (진행) -->
+<update id="projSttsCd2" parameterType="String">
+	<![CDATA[
+		update tb_proj
+		set
+		PROJ_STTS_CD = 'P002-2'
+		where
+		trunc(sysdate) <= to_date(TB_PROJ.PROJ_BGNG_DT, 'YYYYMMDD')
+	]]>
+</update>
+
+<!-- 프로젝트 진행상태 (완료) -->
+<update id="projSttsCd3" parameterType="String">
+	<![CDATA[
+		update tb_proj
+		set
+		PROJ_STTS_CD = 'P002-3'
+		where
+		trunc(sysdate) > to_date(TB_PROJ.PROJ_BGNG_DT, 'YYYYMMDD')
+	]]>
+</update>
+
+</mapper>

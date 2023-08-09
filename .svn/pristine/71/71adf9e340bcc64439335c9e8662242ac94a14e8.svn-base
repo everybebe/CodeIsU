@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.academiSupport.mapper.CfroomRsvtMapper">
+
+
+    <insert id="insertCfroomRsvt" parameterType="CfroomRsvtVO">
+		INSERT INTO (
+              CFROMM_CD
+            , RSVT_DT
+            , RSVT_HR
+            , STU_NO)
+        VALUES(
+              #{cfrommCd}
+            , #{rsvtDt}
+            , #{rsvtHr}
+            , #{stuNo}
+        )
+    </insert>
+    <select id="selectCfroomRsvtList" resultType="CfroomRsvtVO">
+        SELECT
+            C.CD_NM AS CFROMM_CD
+            , TO_CHAR(TB_CFROOM_RSVT.RSVT_DT, 'yyyy-mm-dd') AS RSVT_DT
+            , TB_CFROOM_RSVT.STU_NO
+            , E.CD_NM AS RSVT_HR
+        FROM
+            TB_CFROOM_RSVT
+        JOIN TB_CM_CD C ON C.CD_TYPE_ID = SUBSTR(TB_CFROOM_RSVT.CFROMM_CD, 1, INSTR(TB_CFROOM_RSVT.CFROMM_CD, '-') - 1)
+            AND C.CD_VL = SUBSTR(TB_CFROOM_RSVT.CFROMM_CD, INSTR(TB_CFROOM_RSVT.CFROMM_CD, '-') + 1)
+            AND C.CD_TYPE_ID = #{cfrommCd}
+            AND C.CD_C_USE_YN = 'Y'
+        JOIN TB_CM_CD E ON E.CD_TYPE_ID = SUBSTR(TB_CFROOM_RSVT.RSVT_HR, 1, INSTR(TB_CFROOM_RSVT.RSVT_HR, '-') - 1)
+            AND E.CD_VL = SUBSTR(TB_CFROOM_RSVT.RSVT_HR, INSTR(TB_CFROOM_RSVT.RSVT_HR, '-') + 1)
+            AND E.CD_TYPE_ID = #{rsvtHr}
+            AND E.CD_C_USE_YN = 'Y'
+
+    </select>
+</mapper>

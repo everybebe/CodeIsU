@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.hakup.mapper.AttdanMapper">
+    <select id="selectStu" parameterType="String" resultType="StuVO">
+        SELECT
+            STU_NO
+            , USER_NM
+            , USER_BRDT
+            , TB_SVLF.SVLF_CN AS SVLF_CN
+            , TB_STU.SVLF_NO AS SVLF_NO
+
+        FROM TB_STU
+        JOIN TB_SVLF ON (TB_STU.SVLF_NO = TB_SVLF.SVLF_NO)
+        JOIN TB_SVLF ON (TB_STU.SVLF_NO = TB_SVLF.SVLF_NO)
+        WHERE STU_NO = #{stuNo}
+    </select>
+</mapper>

@@ -1,0 +1,5 @@
+package team.tttt.pms.emp.schedule.service;
+
+public interface ScheduleService {
+
+}

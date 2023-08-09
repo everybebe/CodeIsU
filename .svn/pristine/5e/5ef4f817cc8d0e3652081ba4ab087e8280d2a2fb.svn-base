@@ -1,0 +1,31 @@
+package team.tttt.pms.project.alarm;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.vo.CustomUser;
+import team.tttt.pms.common.vo.UserVO;
+
+@Controller
+@Slf4j
+@RequestMapping("/pms/project")
+public class AlarmController {
+
+	@ResponseBody
+	@PostMapping("/alarm")
+	public UserVO getAlarm(Authentication auth) {
+
+		CustomUser mVO = (CustomUser) auth.getPrincipal();
+		UserVO userVO = mVO.getMember();
+
+		log.info("로그인 정보 : " + userVO.getUserNo()); log.info("로그인 정보 : " + userVO);
+
+
+		return userVO;
+	}
+}

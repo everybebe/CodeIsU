@@ -1,0 +1,21 @@
+package team.tttt.pms.project.kanban.web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/pms/project")
+public class PmsKanbanController {
+
+
+
+	@RequestMapping("/kanban")
+	public String list(String projNo, Model model) {
+		model.addAttribute("projNo",projNo);
+
+		return "pms/com/taskKanban";
+	}
+
+
+}

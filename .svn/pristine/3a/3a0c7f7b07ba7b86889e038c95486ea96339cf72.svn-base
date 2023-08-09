@@ -1,0 +1,82 @@
+package team.tttt.pms.emp.cmcode.web;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.common.vo.CmCdVO;
+import team.tttt.pms.emp.cmcode.service.CmCodeService;
+import team.tttt.pms.emp.vo.cmTypeVO;
+
+@Slf4j
+@Controller
+@RequestMapping("/emp/cmcode")
+public class cmCodeController {
+
+	@Inject
+	private CmCodeService cmCodeService;
+
+	@GetMapping("/cmcodemain")
+	public String cmcodemain(Model model) {
+		log.info("cmcodemain()...실행");
+
+		List<cmTypeVO> cmtyList = new ArrayList<cmTypeVO>();
+		cmtyList = cmCodeService.cmtyList();
+
+		log.info(""+cmtyList);
+
+		model.addAttribute("cmtyList", cmtyList);
+
+		return "emp/com/cmcode/cmcodemain";
+	}
+
+	@ResponseBody
+	@GetMapping("/codelist")
+	public List<CmCdVO> codelist(String cdTypeId){
+		log.info("codelist()...실행");
+
+		List<CmCdVO> codeList = new ArrayList<CmCdVO>();
+
+		codeList = cmCodeService.codeList(cdTypeId);
+
+		return codeList;
+	}
+
+	@ResponseBody
+	@PostMapping("/codeTypeInsert")
+	public String codeTypeInsert(@RequestBody cmTypeVO cmtypeVO) {
+		log.info("codeTypeInsert()...실행");
+		log.info("cmtypeVO"+cmtypeVO);
+		String result = "";
+
+		List<cmTypeVO> cmtyList = new ArrayList<cmTypeVO>();
+		cmtyList = cmCodeService.cmtyList();
+
+		String cdtyId = cmtypeVO.getCdTypeId();
+
+		log.info("체크1"+cmtyList);
+		log.info("체크2"+cdtyId);
+
+		for(int i=0; i<cmtyList.size(); i++) {
+			String id = cmtyList.get(i).getCdTypeId();
+			log.info(i+"번째 : " + id);
+
+			if(cdtyId.equals(id)) {
+				log.info("중복이에요");
+				result = "아이디중복";
+			}
+		}
+
+		return result;
+	}
+}

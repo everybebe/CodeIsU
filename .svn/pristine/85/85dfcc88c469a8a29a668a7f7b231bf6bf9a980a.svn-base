@@ -1,0 +1,235 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<style>
+.avatar-sm {
+	width: 50px;
+	height: 50px;
+}
+
+.more {
+    font-weight: bold;
+    position: absolute;
+    right: -105px;
+    font-size: 12px;
+    top: 9px;
+    cursor:pointer;
+}
+
+.more2 {
+    font-weight: bold;
+    position: absolute;
+    right: -50px;
+    font-size: 12px;
+    top: 9px;
+    cursor:pointer;
+}
+
+.mpoint {
+    cursor:pointer;
+}
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <div class="list-group">
+                <a href="javascript:goToMenu('#')" class="list-group-item list-group-item-action active" aria-current="true">
+                  학업지원
+                </a>
+                <a href="javascript:goToMenu('stu_h_cfroom')" class="list-group-item list-group-item-action">회의실 예약</a>
+                <a href="javascript:goToMenu('stu_h_cert')" class="list-group-item list-group-item-action">증명서 발급</a>
+                <a href="javascript:goToMenu('stu_h_attdan')" class="list-group-item list-group-item-action">조퇴외출 신청</a>
+                <a href="javascript:goToMenu('stu_h_consult')" class="list-group-item list-group-item-action">상담 신청</a>
+                <a href="javascript:goToMenu('stu_h_timetable')" class="list-group-item list-group-item-action">시간표</a>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="list-group">
+                <a href="javascript:goToMenu('stu_classroom')" class="list-group-item list-group-item-action active" aria-current="true">
+                  클래스룸
+                </a>
+                <a href="javascript:goToMenu('stu_c_assign')" class="list-group-item list-group-item-action">과제</a>
+                <a href="javascript:goToMenu('stu_c_qstn')" class="list-group-item list-group-item-action">질문</a>
+                <a href="javascript:goToMenu('stu_c_bbs')" class="list-group-item list-group-item-action">자료실</a>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="list-group">
+                <a href="javascript:goToMenu('#')" class="list-group-item list-group-item-action active" aria-current="true">
+                  마이페이지
+                </a>
+                <a href="javascript:goToMenu('stu_m_modify')" class="list-group-item list-group-item-action">개인정보수정</a>
+                <a href="javascript:goToMenu('stu_m_inout')" class="list-group-item list-group-item-action">출결조회</a>
+                <a href="javascript:goToMenu('stu_m_resume')" class="list-group-item list-group-item-action">이력서</a>
+                <a href="javascript:goToMenu('stu_m_abandon')" class="list-group-item list-group-item-action">수강포기</a>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="list-group">
+                <a href="javascript:goToMenu('stu_notice')" class="list-group-item list-group-item-action active" aria-current="true">
+                  공지사항
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<br>
+<br>
+<div class="container g-3 mb-2 row-deck">
+	<div class="row">
+		<!-- 내 프로젝트 리스트 -->
+		<div class="card col-4">
+			<div class="table-responsive row">
+				<div class="col-8 pb-3 h3" style="font-weight: bold;">내 프로젝트</div>
+				<div class="col-4 pb-3 text-xs more2">
+					<a href="javascript:goToMenu('pms_myprojects')">+더보기</a>
+				</div>
+				<div class="row">
+					<div class="col scroll-Wrap" id="projectList"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-1"></div>
+
+		<!-- 이슈 리스트 -->
+		<div class="card col-7">
+			<div class="table-responsive row">
+				<div class="col-8 pb-3 h3" style="font-weight: bold;">이슈</div>
+				<div class="col-4 pb-3 text-xs float-end more">
+					<a href="javascript:goToMenu('pms_issue')">+더보기</a>
+				</div>
+
+				<div class="row" style="overflow-x: auto;">
+				<table>
+					<tr class="col text-center">
+						<th>제목</th>
+						<th>담당자</th>
+						<th>등록자</th>
+						<th>등록일</th>
+						<th>상태</th>
+					</tr>
+
+				<tbody class="text-center" id="issueList">
+				</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 프로젝트 리스트 -->
+
+<script>
+ var stuNo = "${userNo}";
+
+//날짜 수정
+ function convertDate(Cdate) {
+	 const year = Cdate.substring(0, 5);
+     const month = Cdate.substring(5, 7);
+     const day = Cdate.substring(7, 10);
+     const formattedDate = year + month + day;
+     return formattedDate;
+ }
+ //날짜 수정 하이픈 제거
+ function converDate2(Cdate){
+ 	const formattedDate = Cdate.replaceAll("-", "");
+ 	return formattedDate;
+ }
+
+ /* 프로젝트 리스트  */
+ function projectList(stuNo){
+    $.ajax({
+      url: "/stu/projlist",
+      data: {
+        stuNo: stuNo,
+      },
+      type: "get",
+      dataType: "json",
+      success: function (res) {
+        console.log("ProjList", res);
+
+        var projList = "";
+        	if(res.length === 0){
+       			 projList += `
+       				<div class="row pb-2">
+       			 		<p></p>
+			  			<p colspan="2" class="col text-center fs-6 font-weight-bolder pt-4 pb-3"> 가입된 프로젝트가 없습니다. </p>
+			  		</div>
+						`;
+			  } else {
+
+	        for (let i = 0; i < res.length; i++) {
+	          projList += `
+		                 <div class="row pb-2 mpoint" id="proj">
+		                  	<div class="col-3 text-center">
+		                 	  <div><img src="../pms/assets/img/small-logos/github.svg" class="avatar avatar-sm rounded-circle me-2"></div>
+		             	    </div>
+		                   <div class="col-9">
+		                     <div class="mb-0 text-xs" style="line-height: 40px;" id="projNm" data-value="\${res[i].projNo}">\${res[i].projNm}</div>
+		                   </div>
+		                 </div>
+	            `;
+	        }
+			  }
+        $("#projectList").html(projList);
+      }
+    });
+  };
+
+  projectList(stuNo);
+
+  $("#projectList").on("click", "#proj", function(){
+	  	var projNo = $(this).find("#projNm").data("value");
+		console.log("projNo ", projNo)
+
+		location.href = "/pms/project/dashBoard?projNo="+projNo;
+  })
+
+  /* 이슈 리스트 */
+  function issueList(stuNo) {
+	  $.ajax({
+	      url: "/stu/issuelist",
+	      data: {
+	        stuNo: stuNo,
+	      },
+	      type: "get",
+	      dataType: "json",
+	      success: function (res) {
+	        console.log("issueList", res);
+
+	        var issueList = "";
+	        	if(res.length === 0){
+	        		issueList += `
+	       				<tr class="row pb-2">
+				  			<td colspan="5" class="col text-center fs-6 font-weight-bolder pt-4 pb-3"> 등록된 이슈가 없습니다. </td>
+				  		</tr>
+							`;
+				  } else {
+
+		        for (let i = 0; i < res.length; i++) {
+		        	issueList += `
+
+			        	<tr>
+		        		 <td>\${res[i].issueTtl}</td>
+		        		 <td>\${res[i].issueAsg}</td>
+		        		 <td>\${res[i].stuNo}</td>
+		        		 <td>\${convertDate(res[i].issueRegDt)}</td>
+		        		 <td>\${res[i].issueSttsCd}</td>
+		        		</tr>
+		            `;
+		        }
+				  }
+	        $("#issueList").html(issueList);
+	      }
+	    });
+	  };
+
+	  issueList(stuNo);
+
+
+
+</script>

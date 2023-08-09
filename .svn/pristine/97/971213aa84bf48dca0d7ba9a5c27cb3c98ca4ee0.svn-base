@@ -1,0 +1,24 @@
+package team.tttt.pms.tch.vo;
+
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class AsmtVO {
+    // 공통과제
+    private String asmtNo;
+    private String asmtTtl;
+    private String asmtExpln;
+    private String asmtDdln;
+    private String empNo;
+    private String asmtDt;
+    private String sbjctCd;
+
+    private List<QstVO> qstList;
+
+}

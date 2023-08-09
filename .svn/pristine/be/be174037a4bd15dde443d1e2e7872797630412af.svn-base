@@ -1,0 +1,15 @@
+package team.tttt.pms.stu.vo;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class CfroomRsvtVO {
+	String cfroomRsvtDt;
+	String cfroomCd;
+	int cfroomRsvtPswd;
+	String stuNo;
+}

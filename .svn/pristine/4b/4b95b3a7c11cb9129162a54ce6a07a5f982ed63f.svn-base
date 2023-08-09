@@ -1,0 +1,40 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar" data-sidebarbg="skin6">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="sidebar-item d-flex justify-content-center"> <a class="sidebar-link sidebar-link" href="index.html"
+                                aria-expanded="false"><span
+                                    class="hide-menu" style="font-size: 28px; font-weight: 600;">마이페이지</span></a></li>
+                        <li class="list-divider"></li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="ticket-list.html"
+                            aria-expanded="false"><span
+                                class="hide-menu">개인정보
+                            </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="ticket-list.html"
+                            aria-expanded="false"><span
+                                class="hide-menu">출결조회
+                            </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="ticket-list.html"
+                            aria-expanded="false"><span
+                                class="hide-menu">이력서
+                            </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="ticket-list.html"
+                            aria-expanded="false"><span
+                                class="hide-menu">수강포기
+                            </span></a>
+                        </li>
+
+
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>

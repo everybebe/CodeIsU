@@ -1,0 +1,199 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<style>
+#topDiv{
+	width: 100%;
+	height: 85vh;
+	display: flex;
+	justify-content: center;
+}
+
+#box1{
+	width: 50vw;
+}
+
+#box2{
+	border: 1px solid red;
+	width: 50vw;
+	height: 85vh;
+	overflow: auto;
+}
+
+#box3{
+	width: 100%;
+	height: 50%;
+	padding-right: 20px;
+}
+
+#datepicker{
+	width: 100%;
+	height: 100%;
+}
+
+.ui-datepicker-inline{
+	width: auto;
+	height: auto;
+}
+
+.ui-datepicker-inline table{
+	height: 90%;
+}
+
+.table{
+	color: black;
+}
+
+</style>
+<div id="topDiv" class="ddiv">
+	<div id="box1" class="ddiv">
+		<div id="box3">
+			<div id="datepicker">
+			</div>
+		</div>
+	</div>
+
+	<div id="box2" class="ddiv">
+		<input type="text" id="attdDt" name="attdDt" value="날짜" class="form-control" style="text-align: center; font-weight: bolder;" readonly/>
+		<div id="boxtoBox">
+			<table class="table">
+				<thead class="table-light">
+					<tr>
+						<th style="text-align: center;" colspan="4" class="p-2">연수과정
+							<select id="svlfNo" name="svlfNo" class="form-select" style="display: inline; width:200px;">
+							<option value = "empty">-- 선택하세요 --</option>
+							</select>
+							</th>
+					</tr>
+					<tr>
+						<td class="p-2">이름</td>
+						<td class="p-2">입실</td>
+						<td class="p-2">퇴실</td>
+						<td class="p-2">출결상태</td>
+					</tr>
+				</thead>
+				<tbody id="taBody">
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+$(function(){
+	datepickerSet();
+
+	$("#svlfNo").on("change", function(){
+		var optionValue = this.value;
+		var dateValue = $("#attdDt").val()
+
+		if(optionValue != "empty"){
+			var data = {
+				"svlfNo" : optionValue,
+				"attdDt" : dateValue
+			}
+
+			stuList(data)
+		}else{
+			//일단은 이렇게 두고 나중에 어떻게 할지 생각
+			alert("연수과정을 선택해주세요");
+		}
+
+	})
+})
+
+function startAttdTable(dateInfo){
+	console.log(dateInfo);
+
+	$.ajax({
+		url : "/emp/stuman/startAttdTable",
+		type : "get",
+		data : dateInfo,
+		dataType : "json",
+		success : function(res){
+
+			var str = `<option value = "empty">-- 선택하세요 --</option>`;
+
+			for(let i=0; i<res.length; i++){
+				str += `
+					<option value="\${res[i].svlfNo}">\${res[i].svlfNm}</option>
+				`
+			}
+
+			$("#svlfNo").html(str);
+
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+
+function stuList(data){
+
+	$.ajax({
+		url : "/emp/stuman/stuList",
+		type : "get",
+		data : data,
+		dataType : "json",
+		success : function(res){
+			console.log(res)
+
+			str = "";
+
+			if(res.length == 0){
+				str += `
+				<tr>
+					<td colspan="4" class="p-2">조회할 정보가 없습니다.</td>
+				</tr>
+				`
+			}else{
+				for(let i=0; i<res.length; i++){
+					str += `
+					<tr class="bTr">
+						<td>\${res[i].userNm}</td>
+						<td>\${res[i].attdAbmiYmd}</td>
+						<td>\${res[i].attdLeaveYmd}</td>
+						<td>\${res[i].cdNm}</td>
+					</tr>
+					`
+				}
+			}
+
+			$("#taBody").html(str);
+
+		},
+		error : function(xhr){
+			alert("상태 : " + xhr.status);
+		}
+	})
+}
+
+function datepickerSet(){
+	$("#datepicker").datepicker({
+		dateFormat : "yy-mm-dd",
+		showMonthAfterYear:true,
+		yearSuffix: "년",
+		dayNames : ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
+		dayNamesMin : ['일','월','화','수','목','금','토'],
+		monthNamesShort : ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames : ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		maxDate: 0,
+		onSelect: function(dateText, datePicker) {
+
+	    	var mm = (datePicker.selectedMonth + 1);
+			var dd = datePicker.selectedDay;
+
+			if(mm < 10){mm =  "0"+mm;}
+			if(dd < 10){dd = "0"+dd;}
+
+			$("#attdDt").val(datePicker.selectedYear + "-" + mm + "-" + dd);
+
+			console.log(dateText)
+
+	    	var dateInfo = {
+	    		"dateInfo" : dateText
+	    	}
+	    	startAttdTable(dateInfo)
+	    }
+	});
+}
+</script>

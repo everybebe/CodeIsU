@@ -1,0 +1,293 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- 공통코드 -->
+<script src="${pageContext.request.contextPath}/common/sw/js/CommonCode.js"></script>
+
+<style>
+.form-control {
+	text-align: left;
+	border: 1px solid #E6E3E2;
+}
+
+#mSubBtn {
+	background-color: #56726a;
+	color: white;
+}
+
+#mcanBtn {
+	border: 1px solid #56726a;
+}
+</style>
+<div class="card" id="issueList"></div>
+
+
+<!--  프로젝트 생성  Modal 시작  -->
+<div class="modal fade" id="insertModal" role="dialog" aria-labelledby="insertModalLabel" aria-hidden="true">
+	<div class="modal-dialog d-flex justify-content-center" role="document">
+		<div class="modal-content" id="modalContent">
+
+			<select class="ps-3 form-select mem" id="issueSttsCd" name="issueSttsCd">
+
+			</select>
+
+		</div>
+	</div>
+</div>
+<!-- 프로젝트 생성  Modal 끝 -->
+
+<script>
+
+//서버에서 발행된 헤더네임과 토큰갑사 저장
+var header = '${_csrf.headerName}';
+var token =  '${_csrf.token}';
+
+  const projNo = "a005";
+  let page;
+  let searchType;
+  let searchWord;
+
+  const issueList = (projNo, page, searchType, searchWord) => {
+    if (page == null) {
+      page = 1;
+    }
+
+    if (searchType == null) {
+      searchType = "title";
+    }
+
+
+    $.ajax({
+      url: "/pms/project/issueList",
+      data: {
+        projNo: projNo,
+        currentPage: page,
+        searchType: searchType,
+        searchWord: searchWord,
+      },
+      type: "get",
+      dataType: "json",
+      success: function (res) {
+        console.log(res);
+        console.log(res.pagingVO);
+        console.log(res.pagingVO.dataList);
+
+       const dataList = res.pagingVO.dataList;
+        const pagingHTML = res.pagingVO.pagingHTML;
+
+        let projectissueList = `
+
+        <form class="input-group input-group-outline" id="searchForm">
+            <input type="hidden" name="page" id="page" />
+            <div class="col-md-1">
+                <div class="input-group input-group-static mb-4">
+                <select class="form-control" id="searchType">
+                    <option value="title" id="searchTypeTitle">내용</option>
+                    <option value="writer" id="searchTypeWriter">작성자</option>
+                    <option value="titleWriter" id="searchTypeTitleWriter">내용+작성자</option>
+                </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="ms-md-auto">
+                <label class="form-label"></label>
+                <input type="text" id="searchWord" name="searchWord" class="form-control" placeholder="Search" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="searchBtn" class="btn btn-outline-secondary">
+                <i class="fas fa=search"></i>검색
+                </button>
+            </div>
+
+            <div class="col-md-2">
+                <button type="button" id="insertStorageBtn" class="btn btn-outline-secondary">
+               등록
+                </button>
+            </div>
+
+        </form>
+
+
+  <div class="table-responsive">
+  <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">이슈코드</th>
+          <th scope="col">이슈내용</th>
+          <th scope="col">등록자</th>
+          <th scope="col">등록일</th>
+          <th scope="col">이슈상태</th>
+        </tr>
+      </thead>
+      <tbody>
+        `;
+        for (let i = 0; i < dataList.length; i++) {
+          projectissueList += `
+        <tr>
+          <td>\${dataList[i].issueCd}</td>
+
+          <td>\${dataList[i].issueCn}</td>
+
+          <td>\${dataList[i].userNm}</td>
+
+          <td>\${dataList[i].issueRegDt}</td>
+
+          <td>\${dataList[i].issueSttsCd}</td>
+
+
+        </tr>
+        `;
+        }
+
+        projectissueList += `
+            </tbody>
+            </table>
+        </div>
+        <div class="card-footer clearfix" id="pagingArea">
+            \${pagingHTML}
+        </div>
+        `;
+        $("#issueList").html(projectissueList);
+        $("#page").val(page);
+        $("#searchType").val(searchType);
+        $("#searchWord").val(searchWord);
+
+        console.log(
+          "page, searchType, searchWord : ",
+          page,
+          searchType,
+          searchWord
+        );
+        pagingClick();
+
+      },
+      error: function (xhr) {
+        console.log("issueList 상태: " + xhr.status);
+      },
+    });
+  };
+
+  issueList(projNo, page, searchType, searchWord);
+
+  const pagingClick = () => {
+    let searchForm = $("#searchForm");
+    let pagingArea = $("#pagingArea");
+
+    let searchBtn = $("#searchBtn");
+
+    let shWord = "";
+    let shType = "";
+
+    searchBtn.on("click", function () {
+      shWord = $("#searchWord").val();
+      shType = $("#searchType").val();
+
+      issueList(projNo, page, shType, shWord);
+    });
+
+    pagingArea.on("click", "a", function (event) {
+      event.preventDefault();
+      var pageNo = $(this).data("page");
+      searchForm.find("#page").val(pageNo);
+
+      shWord = $("#searchWord").val();
+      shType = $("#searchType").val();
+
+      issueList(projNo, pageNo, shType, shWord);
+    });
+  };
+
+
+  /* 이슈 등록 버튼  */
+  $("#issueList").on("click","#insertStorageBtn",function(){
+
+    const insertModal = `
+		<div class="modal-header">
+        <h5 class="modal-title font-weight-normal" id="aplyModalLabel">프로젝트 지원</h5>
+        </div>
+
+      <div class="modal-body">
+         <form>
+          <h5 class="modal-title font-weight-normal mb-2" id="aplyModalLabel"></h5>
+  		<div class="d-flex justify-content-start mb-3">
+	      <label class="w-20 pt-2 form-label" for="issueCd">이슈코드</label>
+	      <select class="ps-3 form-select mem" id="issueCd" name="issueCd">
+
+		  </select>
+        </div>
+        <div class="d-flex justify-content-start mb-3">
+		  <label class="w-20 pt-2 form-label" for="mCon">이슈내용</label>
+          <textarea class="form-control mb-2 ps-2" id="mCon"></textarea>
+        </div>
+	    <div class="d-flex justify-content-start mb-3">
+		  <label class="w-20 pt-2 form-label" for="issueSttsCd">이슈상태</label>
+	      <select class="ps-3 form-select mem" id="issueSttsCd" name="issueSttsCd">
+
+		  </select>
+	    </div>
+
+
+	      <div class="modal-footer">
+	        <button type="button" class="btn bg msubBtn" id="mSubBtn">등록</button>
+	        <button type="reset" class="btn bg mcanBtn" data-bs-dismiss="modal" id="mcanBtn">취소</button>
+	      </div>
+        </form>
+      </div>
+		`
+
+      $("#modalContent").html(insertModal);
+	  getCodeOptionOneSelected("P007","issueCd",issueCd);
+	  getCodeOptionOneSelected("P006","issueSttsCd",issueSttsCd);
+
+      $("#insertModal").modal("show");
+
+
+  })
+
+
+	document.addEventListener("click", function (event) {
+		var projNo = 'a005';
+		var stuNo = 'S2302105';
+
+		if (event.target.id === "mSubBtn") {
+			var data = {
+				issueCd : $("#issueCd").val(),
+			  	issueCn : $("#mCon").val(),
+			  	issueSttsCd : $("#issueSttsCd").val(),
+			  	stuNo : stuNo,
+			  	projNo : projNo
+			};
+
+		console.log(data);
+	//서버로 보내기
+		insertIssue(data);
+		$("#insertModal").modal("hide");
+
+	    }
+});
+
+	function insertIssue(data) {
+
+			$.ajax({
+				url : "/pms/project/insertissue",
+				type : "post",
+				data : data,
+				dataType : "text",
+				//contentType : "application/json; charset=utf-8",
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader(header, token);
+				},
+				success : function(res) {
+					alert("이슈 등록 성공!!")
+					issueList(projNo, page, searchType, searchWord);
+				},
+				error : function(xhr){
+					alert(xhr.status);
+				}
+			})
+	  }
+
+ </script>

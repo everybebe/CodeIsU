@@ -1,0 +1,15 @@
+package team.tttt.pms.project.dashBoard.web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/pms/project")
+public class PmsDashBoardController {
+
+	@RequestMapping("/dashBoard")
+	public String list() {
+		return "pms/com/pmsDashBoard";
+	}
+
+}

@@ -1,0 +1,5 @@
+package team.tttt.pms.common.utils.cmFile.service;
+
+public interface CommonFileService {
+
+}

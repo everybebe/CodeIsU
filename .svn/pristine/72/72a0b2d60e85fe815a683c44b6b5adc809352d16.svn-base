@@ -1,0 +1,26 @@
+package team.tttt.pms.emp.kalleave.web;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import team.tttt.pms.emp.kalleave.service.KalleaveService;
+
+@Slf4j
+@Controller
+@RequestMapping("/emp/stuman")
+public class KalleaveController {
+
+	@Inject
+	private KalleaveService kalleaveService;
+
+	@GetMapping("/kalleave")
+	public String kalleave() {
+		log.info("kalleave()...실행");
+
+		return "emp/com/stumanage/kalleave/kalleaveMain";
+	}
+}

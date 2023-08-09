@@ -1,0 +1,5 @@
+package team.tttt.pms.tch.damdang.service;
+
+public interface TchProjService {
+
+}
